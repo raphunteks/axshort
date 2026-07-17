@@ -1,9 +1,12 @@
-<!-- FILE: views/play.html -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <!-- [SUPER UPGRADE] Vercel Path Fix -->
     <%- include('./partials/header.html') %>
+    
+    <!-- [SUPER BIG UPGRADE] Force Load CSS dari Vercel / Github (Anti Blank) -->
+    <link rel="stylesheet" href="/public/css/main.css">
+
     <!-- Khusus Player Schema -->
     <script type="application/ld+json">
     {
