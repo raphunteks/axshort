@@ -6,9 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginOverlay = document.getElementById('loginOverlay');
     const dashboardWrapper = document.getElementById('dashboardWrapper');
 
-    // ==========================================
-    // 1. SISTEM LOGIN GATE KREDENSIAL
-    // ==========================================
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -29,9 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ==========================================
-    // 2. EVENT LISTENER FORMS DASHBOARD (UPLOAD VIDEO & COVER MULTIPART)
-    // ==========================================
     const addVideoForm = document.getElementById('addVideoForm');
     const btnSubmit = document.getElementById('btnUploadSubmit');
 
@@ -39,40 +33,36 @@ document.addEventListener('DOMContentLoaded', () => {
         addVideoForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Animasi Loading Tombol
             const originalBtnText = btnSubmit.innerText;
-            btnSubmit.innerText = "⏳ Sedang Mengupload... (Jangan di-close)";
+            btnSubmit.innerText = "⏳ Sedang Memproses... (Jangan di-close)";
             btnSubmit.disabled = true;
             btnSubmit.style.opacity = "0.7";
 
-            // Menggunakan FormData untuk support Upload File Binary
             const formData = new FormData();
             formData.append('title', document.getElementById('vidTitle').value);
             formData.append('genre', document.getElementById('vidGenre').value);
             formData.append('isPremium', document.getElementById('vidPremium').checked);
 
-            // [SUPER UPGRADE] Cek Cover Image (File vs URL)
             const coverFileInput = document.getElementById('vidCoverFile');
             const coverUrlInput = document.getElementById('vidCoverUrl');
 
             if (coverFileInput.files.length > 0) {
-                formData.append('coverFile', coverFileInput.files[0]); // Attach gambar binary
+                formData.append('coverFile', coverFileInput.files[0]);
             } else if (coverUrlInput.value.trim() !== '') {
-                formData.append('coverUrl', coverUrlInput.value); // Kirim URL
+                formData.append('coverUrl', coverUrlInput.value);
             } else {
                 alert("Bosku wajib masukin File Cover Image atau Paste URL Cover!");
                 resetBtn();
                 return;
             }
 
-            // Cek Video (File vs URL)
             const fileInput = document.getElementById('vidFile');
             const urlInput = document.getElementById('vidUrl');
 
             if (fileInput.files.length > 0) {
-                formData.append('videoFile', fileInput.files[0]); // Attach video binary
+                formData.append('videoFile', fileInput.files[0]);
             } else if (urlInput.value.trim() !== '') {
-                formData.append('videoUrl', urlInput.value); // Kirim URL
+                formData.append('videoUrl', urlInput.value);
             } else {
                 alert("Bosku wajib masukin File Video atau Paste URL!");
                 resetBtn();
@@ -80,7 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                // Fetch TIDAK BOLEH pakai header 'Content-Type: application/json' jika pakai FormData
                 const res = await fetch('/api/admin/videos', {
                     method: 'POST',
                     body: formData 
@@ -88,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const data = await res.json();
                 if(data.success) {
-                    alert(`🔥 BOMB! Video "${data.video.title}" berhasil naik ke server!`);
+                    alert(`🔥 BOMB! Video "${data.video.title}" berhasil naik ke server! (Jika pakai GDrive otomatis ter-convert)`);
                     addVideoForm.reset();
                     initDashboardData(); 
                 } else {
@@ -96,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (error) {
                 console.error(error);
-                alert("Oops! Server lagi sibuk, gagal upload.");
+                alert("Oops! Server lagi sibuk, gagal koneksi.");
             } finally {
                 resetBtn();
             }
