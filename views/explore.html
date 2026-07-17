@@ -1,7 +1,8 @@
 <!-- FILE: views/explore.html -->
 <!DOCTYPE html>
 <html lang="id">
-<%- include('partials/header') %>
+<!-- [SUPER UPGRADE] Pakai exact path dan ekstensi .html buat Vercel EJS Compiler -->
+<%- include('./partials/header.html') %>
 <body>
     <div class="blob-bg"></div>
     
@@ -24,7 +25,8 @@
         </div>
     </main>
 
-    <%- include('partials/footer') %>
+    <!-- [SUPER UPGRADE] Pakai exact path dan ekstensi .html buat Vercel EJS Compiler -->
+    <%- include('./partials/footer.html') %>
     <script>
         // [SUPER BIG UPGRADE] - Safe DOM Manipulation Anti-Crash
         // Mencegah error "Cannot read properties of undefined" saat partials belum di-render server
