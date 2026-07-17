@@ -9,14 +9,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// [SUPER UPGRADE] Perbaikan Path Folder Public untuk Vercel
-app.use('/public', express.static(path.join(process.cwd(), 'public')));
+// [SUPER BIG UPGRADE] Paksa Vercel baca folder 'public' pakai __dirname absolut
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // Set EJS as view engine for HTML rendering
+app.set('views', path.join(__dirname, 'views'));
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
-// [SUPER UPGRADE] Pakai process.cwd() agar Vercel bisa menemukan folder views
-app.set('views', path.join(process.cwd(), 'views'));
 
 // Initialize Upstash Redis (Safe Initialization)
 let redis;
@@ -72,7 +71,7 @@ app.post('/api/verify-token', async (req, res) => {
 // ==========================================
 app.get('/api/admin/stats', (req, res) => {
   const totalViews = mockVideos.reduce((sum, v) => sum + (v.views || 0), 0);
-  res.json({ totalVideos: mockVideos.length, totalTokens: mockTokens.length, activeTokens: mockTokens.filter(t => !t.isUsed).length, totalViews });
+  res.json({ totalViews: mockVideos.length, totalTokens: mockTokens.length, activeTokens: mockTokens.filter(t => !t.isUsed).length, totalViews });
 });
 app.post('/api/admin/videos', (req, res) => {
   const { title, genre, coverUrl, videoUrl, isPremium } = req.body;
@@ -102,14 +101,12 @@ app.get('/search', (req, res) => res.render('search'));
 app.get('/play/:id', (req, res) => res.render('play', { videoId: req.params.id }));
 app.get('/admin-dashboard', (req, res) => res.render('admin-dashboard'));
 
-// [SUPER UPGRADE] Global Error Handler (Anti Vercel Blank Screen)
-// Kalau ada error lagi, dia bakal munculin log jelas di layar, bukan cuma "Internal Server Error"
+// Global Error Handler
 app.use((err, req, res, next) => {
     console.error("🔥 AXA SERVER CRASH:", err.stack);
     res.status(500).send(`
       <div style="background:#050510; color:#00FF80; font-family:monospace; padding:40px; height:100vh;">
         <h2>🔥 500 - SYSTEM CRASH</h2>
-        <p>Ada yang salah dari internal server bosku. Cek log di bawah:</p>
         <pre style="background:#111; padding:15px; border-left:4px solid #ff3366; overflow-x:auto;">${err.message}</pre>
       </div>
     `);
