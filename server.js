@@ -8,12 +8,15 @@ const { Redis } = require('@upstash/redis');
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use('/public', express.static(path.join(__dirname, 'public')));
+
+// [SUPER UPGRADE] Perbaikan Path Folder Public untuk Vercel
+app.use('/public', express.static(path.join(process.cwd(), 'public')));
 
 // Set EJS as view engine for HTML rendering
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
-app.set('views', path.join(__dirname, 'views'));
+// [SUPER UPGRADE] Pakai process.cwd() agar Vercel bisa menemukan folder views
+app.set('views', path.join(process.cwd(), 'views'));
 
 // Initialize Upstash Redis (Safe Initialization)
 let redis;
@@ -44,11 +47,8 @@ let mockTokens = [
 // API ENDPOINTS (PUBLIC)
 // ==========================================
 app.get('/api/videos', async (req, res) => {
-  try {
-    res.json(mockVideos); 
-  } catch (error) {
-    res.status(200).json(mockVideos); 
-  }
+  try { res.json(mockVideos); } 
+  catch (error) { res.status(200).json(mockVideos); }
 });
 
 app.post('/api/verify-token', async (req, res) => {
@@ -56,15 +56,11 @@ app.post('/api/verify-token', async (req, res) => {
     const { videoId, token } = req.body;
     if (!videoId || !token) return res.status(400).json({ valid: false, message: "Token required" });
 
-    // Cek Token di Mock Database
     const tokenExists = mockTokens.find(t => t.token === token && (t.videoId === videoId || t.videoId === "ALL"));
-    
     if (tokenExists && !tokenExists.isUsed) {
-      // Tandai token terpakai jika bukan master token
       if(token !== "AXA2026") tokenExists.isUsed = true;
       return res.json({ valid: true, streamUrl: "https://sample-videos.com/video123.mp4" });
     }
-    
     res.status(403).json({ valid: false, message: "Token Invalid atau Sudah Terpakai" });
   } catch (error) {
     res.status(500).json({ valid: false, message: "Internal Server Error" });
@@ -76,42 +72,26 @@ app.post('/api/verify-token', async (req, res) => {
 // ==========================================
 app.get('/api/admin/stats', (req, res) => {
   const totalViews = mockVideos.reduce((sum, v) => sum + (v.views || 0), 0);
-  res.json({ 
-    totalVideos: mockVideos.length, 
-    totalTokens: mockTokens.length,
-    activeTokens: mockTokens.filter(t => !t.isUsed).length,
-    totalViews
-  });
+  res.json({ totalVideos: mockVideos.length, totalTokens: mockTokens.length, activeTokens: mockTokens.filter(t => !t.isUsed).length, totalViews });
 });
-
 app.post('/api/admin/videos', (req, res) => {
   const { title, genre, coverUrl, videoUrl, isPremium } = req.body;
-  const newVideo = {
-    id: `v${Date.now()}`,
-    title, genre, coverUrl, videoUrl, isPremium, views: 0
-  };
+  const newVideo = { id: `v${Date.now()}`, title, genre, coverUrl, videoUrl, isPremium, views: 0 };
   mockVideos.push(newVideo);
   res.json({ success: true, message: "Video berhasil di-upload!", video: newVideo });
 });
-
 app.post('/api/admin/tokens', (req, res) => {
   const { videoId, prefix, count } = req.body;
   const generatedTokens = [];
-  
   for(let i=0; i<count; i++) {
-    const randomStr = Math.random().toString(36).substring(2, 8).toUpperCase();
-    const tokenStr = `${prefix}-${randomStr}`;
+    const tokenStr = `${prefix}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
     const newToken = { token: tokenStr, videoId, isUsed: false, createdAt: new Date().toISOString() };
     mockTokens.push(newToken);
     generatedTokens.push(newToken);
   }
-  
   res.json({ success: true, message: `${count} Token berhasil dibuat!`, tokens: generatedTokens });
 });
-
-app.get('/api/admin/tokens', (req, res) => {
-  res.json(mockTokens);
-});
+app.get('/api/admin/tokens', (req, res) => { res.json(mockTokens); });
 
 // ==========================================
 // VIEW ROUTES
@@ -120,8 +100,20 @@ app.get('/', (req, res) => res.render('index'));
 app.get('/explore', (req, res) => res.render('explore'));
 app.get('/search', (req, res) => res.render('search'));
 app.get('/play/:id', (req, res) => res.render('play', { videoId: req.params.id }));
-// NEW ADMIN ROUTE
 app.get('/admin-dashboard', (req, res) => res.render('admin-dashboard'));
+
+// [SUPER UPGRADE] Global Error Handler (Anti Vercel Blank Screen)
+// Kalau ada error lagi, dia bakal munculin log jelas di layar, bukan cuma "Internal Server Error"
+app.use((err, req, res, next) => {
+    console.error("🔥 AXA SERVER CRASH:", err.stack);
+    res.status(500).send(`
+      <div style="background:#050510; color:#00FF80; font-family:monospace; padding:40px; height:100vh;">
+        <h2>🔥 500 - SYSTEM CRASH</h2>
+        <p>Ada yang salah dari internal server bosku. Cek log di bawah:</p>
+        <pre style="background:#111; padding:15px; border-left:4px solid #ff3366; overflow-x:auto;">${err.message}</pre>
+      </div>
+    `);
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 AXA SHORT+ running on port ${PORT}`));
