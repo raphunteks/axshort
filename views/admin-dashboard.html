@@ -3,16 +3,13 @@
 <html lang="id">
 <head>
     <%- include('./partials/header.html') %>
-    
-    <!-- [SUPER BIG UPGRADE] Force Load CSS dari Vercel / Github (Anti Blank) -->
     <link rel="stylesheet" href="/public/css/main.css">
-    
     <title>CMS Admin | AXA SHORT+</title>
 </head>
 <body class="admin-body">
     <div class="blob-bg"></div>
 
-    <!-- [SUPER BIG UPGRADE] LANDING PAGE ADMIN LOGIN OVERLAY -->
+    <!-- LANDING PAGE ADMIN LOGIN OVERLAY -->
     <div id="loginOverlay" style="position: fixed; top:0; left:0; width:100%; height:100vh; z-index: 9999; display: flex; align-items: center; justify-content: center; background: rgba(5, 5, 16, 0.95); backdrop-filter: blur(20px); transition: opacity 0.3s ease;">
         <div class="glass-panel" style="padding: 40px; width: 90%; max-width: 400px; text-align: center;">
             <h2 class="text-neon" style="margin-bottom: 10px; text-shadow: 0 0 10px rgba(0,255,128,0.5);">AXA SYSTEM</h2>
@@ -30,7 +27,7 @@
         </div>
     </div>
 
-    <!-- WRAPPER UNTUK KONTEN DASHBOARD (AWALNYA DI-HIDE) -->
+    <!-- WRAPPER UNTUK KONTEN DASHBOARD -->
     <div id="dashboardWrapper" style="display: none; opacity: 0; transition: opacity 0.5s ease;">
         <header class="admin-header">
             <div>
@@ -52,7 +49,7 @@
                     <h1 id="statTotalToken" class="text-neon" style="font-size: 2.5rem;">0</h1>
                 </div>
                 <div class="holo-card" style="padding: 20px;">
-                    <h4 class="text-cyan">Token Aktif (Unused)</h4>
+                    <h4 class="text-cyan">Token Aktif</h4>
                     <h1 id="statActiveToken" class="text-neon" style="font-size: 2.5rem;">0</h1>
                 </div>
                 <div class="holo-card" style="padding: 20px;">
@@ -61,9 +58,11 @@
                 </div>
             </div>
 
-            <!-- FORM UPLOAD VIDEO -->
+            <!-- FORM UPLOAD VIDEO [UPGRADED: BISA UPLOAD FILE] -->
             <div class="glass-panel" style="padding: 25px;">
                 <h3 class="text-cyan" style="margin-bottom: 20px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">🎥 Upload Video Baru</h3>
+                
+                <!-- enctype multipart/form-data dihapus karena kita handle via Fetch API FormData di JS -->
                 <form id="addVideoForm">
                     <div class="form-group">
                         <label class="form-label">Judul Film</label>
@@ -83,10 +82,25 @@
                         <label class="form-label">Cover Image URL</label>
                         <input type="url" id="vidCover" class="neu-glass-input" placeholder="https://..." required>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Video Stream URL</label>
-                        <input type="url" id="vidUrl" class="neu-glass-input" placeholder="https://..." required>
+                    
+                    <div style="background: rgba(0, 255, 128, 0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(0, 255, 128, 0.3); margin-bottom: 15px;">
+                        <p style="color: var(--accent-neon); font-size: 0.85rem; margin-bottom: 10px; font-weight: bold;">PILIH SUMBER VIDEO (Pilih Salah Satu)</p>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Opsi 1: Upload File Langsung (MP4, MOV)</label>
+                            <input type="file" id="vidFile" class="neu-glass-file" accept="video/mp4,video/x-m4v,video/*">
+                        </div>
+                        
+                        <div class="form-group" style="text-align: center; margin: 10px 0;">
+                            <span style="color: #666; font-size: 0.8rem;">-- ATAU --</span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Opsi 2: Paste URL Video External</label>
+                            <input type="url" id="vidUrl" class="neu-glass-input" placeholder="https://domain.com/video.mp4">
+                        </div>
                     </div>
+
                     <div class="form-group" style="display: flex; align-items: center; gap: 15px;">
                         <label class="form-label" style="margin:0;">Jadikan Konten Premium? (Butuh Token)</label>
                         <label class="switch">
@@ -94,7 +108,7 @@
                             <span class="slider"></span>
                         </label>
                     </div>
-                    <button type="submit" class="btn-skeuo" style="margin-top: 10px;">Simpan Video ke Database</button>
+                    <button type="submit" id="btnUploadSubmit" class="btn-skeuo" style="margin-top: 10px;">Upload & Simpan Data</button>
                 </form>
             </div>
 
@@ -106,12 +120,11 @@
                         <label class="form-label">Pilih Video yang Diberi Akses</label>
                         <select id="tokenVideoId" class="neu-glass-input" required>
                             <option value="ALL">Semua Video (Master/VIP Token)</option>
-                            <!-- Dynamic options loaded by JS -->
                         </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Custom Prefix (Awalan Token)</label>
-                        <input type="text" id="tokenPrefix" class="neu-glass-input" placeholder="Contoh: AXA, VIP, TIKTOK" value="AXA" required>
+                        <input type="text" id="tokenPrefix" class="neu-glass-input" placeholder="Contoh: AXA, VIP" value="AXA" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Jumlah Token yang Ingin Dicetak</label>
@@ -143,7 +156,6 @@
         </main>
     </div>
 
-    <!-- PASTIKAN PATH /public/ MASUK -->
     <script src="/public/js/admin.js"></script>
 </body>
 </html>
