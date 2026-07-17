@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 2. EVENT LISTENER FORMS DASHBOARD (UPLOAD VIDEO MULTIPART)
+    // 2. EVENT LISTENER FORMS DASHBOARD (UPLOAD VIDEO & COVER MULTIPART)
     // ==========================================
     const addVideoForm = document.getElementById('addVideoForm');
     const btnSubmit = document.getElementById('btnUploadSubmit');
@@ -49,15 +49,28 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData();
             formData.append('title', document.getElementById('vidTitle').value);
             formData.append('genre', document.getElementById('vidGenre').value);
-            formData.append('coverUrl', document.getElementById('vidCover').value);
             formData.append('isPremium', document.getElementById('vidPremium').checked);
 
-            // Cek apakah admin memilih upload file ATAU paste URL
+            // [SUPER UPGRADE] Cek Cover Image (File vs URL)
+            const coverFileInput = document.getElementById('vidCoverFile');
+            const coverUrlInput = document.getElementById('vidCoverUrl');
+
+            if (coverFileInput.files.length > 0) {
+                formData.append('coverFile', coverFileInput.files[0]); // Attach gambar binary
+            } else if (coverUrlInput.value.trim() !== '') {
+                formData.append('coverUrl', coverUrlInput.value); // Kirim URL
+            } else {
+                alert("Bosku wajib masukin File Cover Image atau Paste URL Cover!");
+                resetBtn();
+                return;
+            }
+
+            // Cek Video (File vs URL)
             const fileInput = document.getElementById('vidFile');
             const urlInput = document.getElementById('vidUrl');
 
             if (fileInput.files.length > 0) {
-                formData.append('videoFile', fileInput.files[0]); // Attach file binary
+                formData.append('videoFile', fileInput.files[0]); // Attach video binary
             } else if (urlInput.value.trim() !== '') {
                 formData.append('videoUrl', urlInput.value); // Kirim URL
             } else {
@@ -68,7 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 // Fetch TIDAK BOLEH pakai header 'Content-Type: application/json' jika pakai FormData
-                // Browser akan otomatis ngeset tipe 'multipart/form-data' dengan boundary yang benar.
                 const res = await fetch('/api/admin/videos', {
                     method: 'POST',
                     body: formData 
