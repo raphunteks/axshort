@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
+const os = require('os'); // [SUPER UPGRADE] OS module untuk mendeteksi Temp Dir Vercel
 const multer = require('multer'); // [SUPER UPGRADE] Library untuk handle upload file
 const { Redis } = require('@upstash/redis');
 
@@ -21,13 +22,19 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 
 // ==========================================
-// KONFIGURASI MULTER (STORAGE UPLOAD VIDEO)
+// KONFIGURASI MULTER (STORAGE UPLOAD VIDEO ANTI-CRASH VERCEL)
 // ==========================================
-const uploadDir = path.join(ROOT_DIR, 'public', 'uploads');
-// Buat folder otomatis jika belum ada
+// [SUPER BIG UPGRADE] Serverless Vercel itu Read-Only (EROFS). Kita HANYA boleh nulis di folder OS Temp (/tmp).
+const isVercel = process.env.VERCEL || process.env.NODE_ENV === 'production';
+const uploadDir = isVercel ? path.join(os.tmpdir(), 'axa_uploads') : path.join(ROOT_DIR, 'public', 'uploads');
+
+// Buat folder otomatis jika belum ada (Sekarang aman dari blokir Vercel)
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
+
+// WAJIB: Daftarkan folder dinamis ini ke express.static agar file upload di /tmp tetap bisa diakses browser
+app.use('/public/uploads', express.static(uploadDir));
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
