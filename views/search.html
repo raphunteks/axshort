@@ -2,25 +2,26 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <!-- [SUPER UPGRADE] Vercel Path Fix -->
     <%- include('./partials/header.html') %>
-    
-    <!-- [SUPER BIG UPGRADE] Force Load CSS dari Vercel / Github (Anti Blank) -->
     <link rel="stylesheet" href="/public/css/main.css">
 </head>
 <body>
     <div class="blob-bg"></div>
     
-    <main style="padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 80vh; justify-content: center;">
-        <h2 style="margin-bottom: 20px;">Cari Film Favorit Lo</h2>
+    <main style="padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 80vh;">
+        <h2 style="margin-top: 20px; margin-bottom: 20px;">Cari Film Favorit Lo</h2>
         
-        <input type="text" class="neu-glass-input" placeholder="Ketik judul film..." style="width: 100%; max-width: 400px; margin-bottom: 20px;">
+        <!-- [SUPER UPGRADE] ID searchInput DITAMBAHKAN AGAR JS BISA BACA KETIKAN -->
+        <input type="text" id="searchInput" class="neu-glass-input" placeholder="Ketik judul film atau genre..." style="width: 100%; max-width: 400px; margin-bottom: 30px;">
         
-        <button class="btn-skeuo" style="width: 100%; max-width: 400px;">Cari Sekarang</button>
+        <!-- [SUPER UPGRADE] WADAH GRID HASIL PENCARIAN -->
+        <div id="search-video-grid" class="video-grid" style="width: 100%; padding: 0;">
+            <!-- Hasil pencarian live akan muncul di sini -->
+        </div>
     </main>
 
-    <!-- [SUPER UPGRADE] Vercel Path Fix -->
     <%- include('./partials/footer.html') %>
+    <script src="/public/js/app.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const navItems = document.querySelectorAll('.nav-item');
