@@ -3,23 +3,49 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
+const multer = require('multer'); // [SUPER UPGRADE] Library untuk handle upload file
 const { Redis } = require('@upstash/redis');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// [SUPER BIG UPGRADE] VERCEL PATH FIX - WAJIB MENGGUNAKAN process.cwd() DI SERVERLESS
-// __dirname sering bikin path nyasar (error 500/Blank) di build Vercel. process.cwd() adalah kunci mutlak.
+// [SUPER BIG UPGRADE] VERCEL PATH FIX - process.cwd() adalah kunci mutlak.
 const ROOT_DIR = process.cwd();
 app.use('/public', express.static(path.join(ROOT_DIR, 'public')));
 
-// Set EJS as view engine for HTML rendering dengan path absolut
+// Set EJS as view engine
 app.set('views', path.join(ROOT_DIR, 'views'));
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 
-// Initialize Upstash Redis (Safe Initialization)
+// ==========================================
+// KONFIGURASI MULTER (STORAGE UPLOAD VIDEO)
+// ==========================================
+const uploadDir = path.join(ROOT_DIR, 'public', 'uploads');
+// Buat folder otomatis jika belum ada
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, uploadDir);
+    },
+    filename: function (req, file, cb) {
+        // Format nama file: axa-timestamp-random.mp4
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, 'axa-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+// Limit upload 100MB (Bisa disesuaikan)
+const upload = multer({ 
+    storage: storage,
+    limits: { fileSize: 100 * 1024 * 1024 } 
+});
+
+// Initialize Upstash Redis
 let redis;
 try {
   redis = new Redis({
@@ -31,16 +57,14 @@ try {
 }
 
 // ==========================================
-// MOCK DATA (GRACEFUL DEGRADATION FALLBACK)
+// MOCK DATA
 // ==========================================
 let mockVideos = [
   { id: "v1", title: "Neon Horizon", genre: "Fiksi Ilmiah", coverUrl: "https://images.unsplash.com/photo-1533972751724-d13706b6fc69?auto=format&fit=crop&w=500&q=80", videoUrl: "#", isPremium: true, views: 1250 },
-  { id: "v2", title: "Midnight Romance", genre: "Romantis", coverUrl: "https://images.unsplash.com/photo-1514316454349-750a7fd3da3a?auto=format&fit=crop&w=500&q=80", videoUrl: "#", isPremium: false, views: 840 },
-  { id: "v3", title: "Cyber Chase", genre: "Aksi", coverUrl: "https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?auto=format&fit=crop&w=500&q=80", videoUrl: "#", isPremium: true, views: 3200 }
+  { id: "v2", title: "Midnight Romance", genre: "Romantis", coverUrl: "https://images.unsplash.com/photo-1514316454349-750a7fd3da3a?auto=format&fit=crop&w=500&q=80", videoUrl: "#", isPremium: false, views: 840 }
 ];
 
 let mockTokens = [
-  { token: "AXA-BETA-001", videoId: "v1", isUsed: false, createdAt: new Date().toISOString() },
   { token: "AXA2026", videoId: "ALL", isUsed: true, createdAt: new Date().toISOString() }
 ];
 
@@ -75,12 +99,36 @@ app.get('/api/admin/stats', (req, res) => {
   const totalViews = mockVideos.reduce((sum, v) => sum + (v.views || 0), 0);
   res.json({ totalViews: mockVideos.length, totalTokens: mockTokens.length, activeTokens: mockTokens.filter(t => !t.isUsed).length, totalViews });
 });
-app.post('/api/admin/videos', (req, res) => {
-  const { title, genre, coverUrl, videoUrl, isPremium } = req.body;
-  const newVideo = { id: `v${Date.now()}`, title, genre, coverUrl, videoUrl, isPremium, views: 0 };
-  mockVideos.push(newVideo);
-  res.json({ success: true, message: "Video berhasil di-upload!", video: newVideo });
+
+// [SUPER UPGRADE] API Upload Video Handle File (Multipart Form-Data)
+app.post('/api/admin/videos', upload.single('videoFile'), (req, res) => {
+  try {
+      const { title, genre, coverUrl, isPremium, videoUrl } = req.body;
+      
+      // Jika admin mengupload file, gunakan path file tersebut. Jika tidak, gunakan URL manual.
+      let finalVideoUrl = videoUrl;
+      if (req.file) {
+          finalVideoUrl = `/public/uploads/${req.file.filename}`;
+      }
+
+      const newVideo = { 
+          id: `v${Date.now()}`, 
+          title, 
+          genre, 
+          coverUrl, 
+          videoUrl: finalVideoUrl, 
+          isPremium: isPremium === 'true' || isPremium === true, 
+          views: 0 
+      };
+      
+      mockVideos.push(newVideo);
+      res.json({ success: true, message: "Video berhasil di-upload!", video: newVideo });
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({ success: false, message: "Gagal menyimpan data video." });
+  }
 });
+
 app.post('/api/admin/tokens', (req, res) => {
   const { videoId, prefix, count } = req.body;
   const generatedTokens = [];
@@ -103,13 +151,13 @@ app.get('/search', (req, res) => res.render('search'));
 app.get('/play/:id', (req, res) => res.render('play', { videoId: req.params.id }));
 app.get('/admin-dashboard', (req, res) => res.render('admin-dashboard'));
 
-// [SUPER BIG UPGRADE] Global Error Handler (Anti Vercel Blank Screen) dengan Debug Path
+// Global Error Handler
 app.use((err, req, res, next) => {
     console.error("🔥 AXA SERVER CRASH:", err.stack);
     res.status(500).send(`
       <div style="background:#050510; color:#00FF80; font-family:monospace; padding:40px; height:100vh;">
         <h2>🔥 500 - SYSTEM CRASH</h2>
-        <p><strong>Peringatan Sistem:</strong> Gagal me-render file EJS atau assets statis.</p>
+        <p><strong>Peringatan Sistem:</strong> Internal Error.</p>
         <pre style="background:#111; padding:15px; border-left:4px solid #ff3366; overflow-x:auto;">${err.message}</pre>
         <pre style="color:#aaa; font-size:0.8rem; margin-top:20px;">CWD Dir: ${process.cwd()}</pre>
       </div>
