@@ -1,8 +1,13 @@
 <!-- FILE: views/explore.html -->
 <!DOCTYPE html>
 <html lang="id">
-<!-- [SUPER UPGRADE] Pakai exact path dan ekstensi .html buat Vercel EJS Compiler -->
-<%- include('./partials/header.html') %>
+<head>
+    <!-- [SUPER UPGRADE] Vercel Path Fix -->
+    <%- include('./partials/header.html') %>
+    
+    <!-- [SUPER BIG UPGRADE] Force Load CSS dari Vercel / Github (Anti Blank) -->
+    <link rel="stylesheet" href="/public/css/main.css">
+</head>
 <body>
     <div class="blob-bg"></div>
     
