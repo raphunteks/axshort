@@ -9,11 +9,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// [SUPER BIG UPGRADE] Paksa Vercel baca folder 'public' pakai __dirname absolut
-app.use('/public', express.static(path.join(__dirname, 'public')));
+// [SUPER BIG UPGRADE] VERCEL PATH FIX - WAJIB MENGGUNAKAN process.cwd() DI SERVERLESS
+// __dirname sering bikin path nyasar (error 500/Blank) di build Vercel. process.cwd() adalah kunci mutlak.
+const ROOT_DIR = process.cwd();
+app.use('/public', express.static(path.join(ROOT_DIR, 'public')));
 
-// Set EJS as view engine for HTML rendering
-app.set('views', path.join(__dirname, 'views'));
+// Set EJS as view engine for HTML rendering dengan path absolut
+app.set('views', path.join(ROOT_DIR, 'views'));
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 
@@ -101,13 +103,15 @@ app.get('/search', (req, res) => res.render('search'));
 app.get('/play/:id', (req, res) => res.render('play', { videoId: req.params.id }));
 app.get('/admin-dashboard', (req, res) => res.render('admin-dashboard'));
 
-// Global Error Handler
+// [SUPER BIG UPGRADE] Global Error Handler (Anti Vercel Blank Screen) dengan Debug Path
 app.use((err, req, res, next) => {
     console.error("🔥 AXA SERVER CRASH:", err.stack);
     res.status(500).send(`
       <div style="background:#050510; color:#00FF80; font-family:monospace; padding:40px; height:100vh;">
         <h2>🔥 500 - SYSTEM CRASH</h2>
+        <p><strong>Peringatan Sistem:</strong> Gagal me-render file EJS atau assets statis.</p>
         <pre style="background:#111; padding:15px; border-left:4px solid #ff3366; overflow-x:auto;">${err.message}</pre>
+        <pre style="color:#aaa; font-size:0.8rem; margin-top:20px;">CWD Dir: ${process.cwd()}</pre>
       </div>
     `);
 });
