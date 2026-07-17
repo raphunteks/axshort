@@ -22,7 +22,7 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 
 // ==========================================
-// KONFIGURASI MULTER (STORAGE UPLOAD VIDEO ANTI-CRASH VERCEL)
+// KONFIGURASI MULTER (STORAGE UPLOAD VIDEO & COVER ANTI-CRASH VERCEL)
 // ==========================================
 // [SUPER BIG UPGRADE] Serverless Vercel itu Read-Only (EROFS). Kita HANYA boleh nulis di folder OS Temp (/tmp).
 const isVercel = process.env.VERCEL || process.env.NODE_ENV === 'production';
@@ -41,9 +41,10 @@ const storage = multer.diskStorage({
         cb(null, uploadDir);
     },
     filename: function (req, file, cb) {
-        // Format nama file: axa-timestamp-random.mp4
+        // [SUPER UPGRADE] Pisahkan penamaan untuk cover dan video agar rapi
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, 'axa-' + uniqueSuffix + path.extname(file.originalname));
+        const prefix = file.fieldname === 'coverFile' ? 'axa-cover-' : 'axa-video-';
+        cb(null, prefix + uniqueSuffix + path.extname(file.originalname));
     }
 });
 // Limit upload 100MB (Bisa disesuaikan)
@@ -107,22 +108,33 @@ app.get('/api/admin/stats', (req, res) => {
   res.json({ totalViews: mockVideos.length, totalTokens: mockTokens.length, activeTokens: mockTokens.filter(t => !t.isUsed).length, totalViews });
 });
 
-// [SUPER UPGRADE] API Upload Video Handle File (Multipart Form-Data)
-app.post('/api/admin/videos', upload.single('videoFile'), (req, res) => {
+// [SUPER UPGRADE] API Upload Handle Multiple Files (Video & Cover Image)
+const uploadFields = upload.fields([
+    { name: 'videoFile', maxCount: 1 }, 
+    { name: 'coverFile', maxCount: 1 }
+]);
+
+app.post('/api/admin/videos', uploadFields, (req, res) => {
   try {
-      const { title, genre, coverUrl, isPremium, videoUrl } = req.body;
+      const { title, genre, isPremium, videoUrl, coverUrl } = req.body;
       
-      // Jika admin mengupload file, gunakan path file tersebut. Jika tidak, gunakan URL manual.
+      // Handle Video URL / File
       let finalVideoUrl = videoUrl;
-      if (req.file) {
-          finalVideoUrl = `/public/uploads/${req.file.filename}`;
+      if (req.files && req.files['videoFile']) {
+          finalVideoUrl = `/public/uploads/${req.files['videoFile'][0].filename}`;
+      }
+
+      // Handle Cover URL / File
+      let finalCoverUrl = coverUrl;
+      if (req.files && req.files['coverFile']) {
+          finalCoverUrl = `/public/uploads/${req.files['coverFile'][0].filename}`;
       }
 
       const newVideo = { 
           id: `v${Date.now()}`, 
           title, 
           genre, 
-          coverUrl, 
+          coverUrl: finalCoverUrl, 
           videoUrl: finalVideoUrl, 
           isPremium: isPremium === 'true' || isPremium === true, 
           views: 0 
