@@ -137,7 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (verifyBtn) {
         verifyBtn.addEventListener('click', async () => {
             const tokenInput = document.getElementById('tokenInput');
-            // [SUPER BIG UPGRADE] Auto-Clean Spasi & Kapital, selaras dengan Backend Redis
             const token = tokenInput.value.trim().toUpperCase();
             const videoId = document.getElementById('videoIdHolder').value;
             
@@ -167,22 +166,54 @@ document.addEventListener('DOMContentLoaded', () => {
                     playerBox.style.background = "#000"; 
                     playerBox.style.padding = "0";
                     
-                    // [SUPER BIG UPGRADE] Auto-Detect Engine untuk iFrame GDrive vs MP4 Lokal
-                    if (data.streamUrl.includes('drive.google.com')) {
+                    // [SUPER BIG UPGRADE] Auto-Convert Legacy GDrive Links di Frontend
+                    // Berjaga-jaga jika database masih nyimpen link lama (/view) yang di-block oleh Google CORS
+                    let finalStream = data.streamUrl;
+                    if (finalStream.includes('drive.google.com') && !finalStream.includes('/preview')) {
+                        const match = finalStream.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+                        if (match && match[1]) {
+                            finalStream = `https://drive.google.com/file/d/${match[1]}/preview`;
+                        }
+                    }
+                    
+                    // [SUPER BIG UPGRADE] Render Engine Mutlak
+                    if (finalStream.includes('drive.google.com')) {
+                        // Merender iFrame dengan parameter keamanan Anti-Block Google
                         playerBox.innerHTML = `
-                            <iframe src="${data.streamUrl}" width="100%" height="100%" allow="autoplay; fullscreen" allowfullscreen style="border:none; border-radius:16px; min-height: 250px;"></iframe>
+                            <iframe 
+                                src="${finalStream}" 
+                                width="100%" 
+                                height="100%" 
+                                allow="autoplay; fullscreen; encrypted-media; picture-in-picture" 
+                                allowfullscreen 
+                                frameborder="0" 
+                                scrolling="no" 
+                                referrerpolicy="no-referrer"
+                                style="border:none; border-radius:16px; min-height: 250px; background: #000;">
+                            </iframe>
                         `;
                     } else {
+                        // Merender native HTML5 Player (Untuk file MP4, dll)
                         playerBox.innerHTML = `
-                            <video width="100%" height="100%" controls autoplay controlsList="nodownload" style="border-radius:16px; outline: none; background: #000;">
-                                <source src="${data.streamUrl}" type="video/mp4">
+                            <video id="axa-native-player" width="100%" height="100%" controls autoplay controlsList="nodownload" style="border-radius:16px; outline: none; background: #000;">
+                                <source src="${finalStream}" type="video/mp4">
+                                <source src="${finalStream}" type="video/quicktime">
                                 Browser lo nggak support HTML5 video bosku.
                             </video>
                         `;
+                        
+                        // [SUPER UPGRADE] Error Trapping: Deteksi jika file Vercel /tmp hilang (404)
+                        setTimeout(() => {
+                            const vidPlayer = document.getElementById('axa-native-player');
+                            if(vidPlayer) {
+                                vidPlayer.addEventListener('error', () => {
+                                    alert("⚠️ VIDEO BLANK / GAGAL DIMUAT! Jika lo pakai Opsi 1 (Upload File) di Vercel, file lo udah dihapus otomatis oleh Vercel. WAJIB pakai Opsi 2 (Link Google Drive) bosku!");
+                                });
+                            }
+                        }, 500);
                     }
                 } else {
                     alert("❌ " + (data.message || "Token Salah atau Sudah Dipakai!"));
-                    // Bersihkan input field dan fokus kembali biar user gampang ngetik ulang
                     tokenInput.value = '';
                     tokenInput.focus();
                 }
@@ -197,13 +228,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Trigger Modal helper function (Dipanggil dari tombol di HTML play.html)
+// Trigger Modal helper function
 window.triggerPremiumUnlock = function(vidId) {
     const modal = document.getElementById('tokenModal');
     modal.classList.add('active'); 
     
-    // [SUPER BIG UPGRADE] Auto-Focus UX
-    // Begitu modal animasi selesai (300ms), kursor otomatis kedap-kedip di input token
     setTimeout(() => {
         const tokenInput = document.getElementById('tokenInput');
         if (tokenInput) tokenInput.focus();
