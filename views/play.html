@@ -1,20 +1,15 @@
+<!-- FILE: views/play.html -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <!-- [SUPER UPGRADE] Vercel Path Fix -->
     <%- include('./partials/header.html') %>
-    
-    <!-- [SUPER BIG UPGRADE] Force Load CSS dari Vercel / Github (Anti Blank) -->
     <link rel="stylesheet" href="/public/css/main.css">
-
-    <!-- Khusus Player Schema -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "VideoObject",
       "name": "AXA Premium Stream",
       "description": "Nonton konten eksklusif berlisensi.",
-      "thumbnailUrl": "https://axashortplus.com/img/axalogo.png",
       "uploadDate": "2026-07-17T08:00:00+08:00"
     }
     </script>
@@ -22,34 +17,42 @@
 <body>
     <div class="blob-bg"></div>
     
-    <main style="padding: 20px;">
-        <a href="/" style="color: var(--accent-cyan); text-decoration: none; display: inline-block; margin-bottom: 20px;">&larr; Kembali</a>
+    <main style="padding: 20px;" id="play-video-details">
+        <a href="/" style="color: var(--accent-cyan); text-decoration: none; display: inline-block; margin-bottom: 20px; font-weight: bold;">&larr; KEMBALI</a>
         
-        <div id="player-container" class="glass-panel" style="height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px;">
-            <h3 style="color: var(--accent-neon); margin-bottom: 10px;">Konten Terkunci</h3>
-            <p style="font-size: 0.85rem; margin-bottom: 20px;">Lo butuh Access Token buat nonton film ini.</p>
-            <button class="btn-skeuo" onclick="triggerPremiumUnlock('<%= videoId %>')">Masukkan Token</button>
+        <!-- WADAH PEMUTAR VIDEO YANG AKAN DI-INJECT OLEH APP.JS -->
+        <div id="player-container" class="glass-panel" style="height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; position: relative; overflow: hidden; transition: all 0.5s ease;">
+            
+            <div style="z-index: 2; position: relative;">
+                <h3 style="color: var(--accent-neon); margin-bottom: 10px; text-shadow: 0 0 10px #000;">Konten Terkunci</h3>
+                <p style="font-size: 0.85rem; margin-bottom: 20px; color:#fff; text-shadow: 0 0 5px #000;">Lo butuh Access Token buat nonton film ini.</p>
+                <button class="btn-skeuo" onclick="triggerPremiumUnlock('<%= videoId %>')">Buka Akses Premium</button>
+            </div>
+            
+            <!-- Shadow gradient biar teks kebaca di atas cover -->
+            <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(to top, #050510, transparent); z-index: 1;"></div>
         </div>
         
-        <div style="margin-top: 20px;">
-            <h2>Judul Film (ID: <%= videoId %>)</h2>
-            <p style="color: #888; font-size: 0.9rem; margin-top: 8px;">Deskripsi film premium yang penuh aksi dan plot twist. Beli token di Telegram resmi untuk membuka akses penuh ke database film kami.</p>
+        <div style="margin-top: 25px;">
+            <!-- Judul dan deskripsi ditarik otomatis dari app.js berdasarkan ID -->
+            <h2 id="play-title" style="color: var(--text-light); text-shadow: 0 0 5px rgba(255,255,255,0.3);">Memuat Judul...</h2>
+            <p id="play-desc" style="color: #aaa; font-size: 0.9rem; margin-top: 10px; line-height: 1.6;">Memuat deskripsi film...</p>
         </div>
     </main>
 
-    <!-- Modal Token -->
+    <!-- Modal Token (Tampil dengan opacity dari CSS active) -->
     <div id="tokenModal" class="modal-overlay">
         <div class="modal-content glass-panel">
-            <h3 style="color: var(--accent-neon); margin-bottom: 15px;">Validasi Akses</h3>
+            <h3 style="color: var(--accent-neon); margin-bottom: 15px;">Validasi Akses AXA</h3>
             <input type="hidden" id="videoIdHolder" value="<%= videoId %>">
-            <input type="text" id="tokenInput" class="neu-glass-input" placeholder="Masukkan Token" style="width: 100%; margin-bottom: 15px;">
-            <button id="verifyTokenBtn" class="btn-skeuo" style="width: 100%; margin-bottom: 10px;">Buka Video</button>
-            <a href="https://t.me/AxaXyzBot" target="_blank" style="display: block; color: var(--accent-cyan); text-decoration: none; font-size: 0.9rem; margin-top: 15px;">Get Token via Telegram</a>
-            <button id="closeModal" style="background:none; border:none; color:#888; margin-top:15px; cursor:pointer;">Batal</button>
+            <input type="text" id="tokenInput" class="neu-glass-input" placeholder="Masukkan Kode Token..." style="width: 100%; margin-bottom: 15px; font-family: monospace; text-align: center; font-size: 1.1rem; text-transform: uppercase;">
+            <button id="verifyTokenBtn" class="btn-skeuo" style="width: 100%; margin-bottom: 15px;">Buka Video Sekarang</button>
+            <a href="https://t.me/AxaXyzBot" target="_blank" style="display: block; color: var(--accent-cyan); text-decoration: none; font-size: 0.9rem; margin-bottom: 15px; font-weight: bold;">[+] Dapatkan Token via Telegram</a>
+            <button id="closeModal" style="background:none; border:none; color:#ff3366; cursor:pointer; font-size: 0.85rem; font-weight: bold;">BATAL & TUTUP</button>
         </div>
     </div>
 
-    <!-- [SUPER UPGRADE] Vercel Path Fix -->
     <%- include('./partials/footer.html') %>
+    <script src="/public/js/app.js"></script>
 </body>
 </html>
