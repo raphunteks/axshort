@@ -1,5 +1,5 @@
 /* FILE: public/css/main.css */
-/* AXA XYZ UI/UX & CSS3 STYLE GUIDE REFERENCE */
+/* Menambahkan Update File Input Custom Style */
 
 :root {
   --bg-navy: #050510;
@@ -60,6 +60,41 @@ body:not(.admin-body) {
 select.neu-glass-input option {
   background: var(--bg-navy);
   color: var(--text-light);
+}
+
+/* [SUPER BIG UPGRADE] Custom File Input Style (Glassmorphism & Neon) */
+.neu-glass-file {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 1px dashed rgba(0, 255, 128, 0.5);
+  border-radius: 12px;
+  color: var(--text-light);
+  padding: 10px;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+.neu-glass-file::file-selector-button {
+  background: linear-gradient(145deg, #060613, #04040d);
+  color: var(--accent-neon);
+  border: 1px solid var(--accent-neon);
+  padding: 8px 16px;
+  border-radius: 8px;
+  margin-right: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+  transition: all 0.3s ease;
+}
+.neu-glass-file::file-selector-button:hover {
+  background: var(--accent-neon);
+  color: #000;
+  box-shadow: 0 0 15px rgba(0,255,128,0.5);
+}
+.neu-glass-file:hover {
+    border-color: var(--accent-neon);
+    background: rgba(0, 255, 128, 0.05);
 }
 
 /* ==========================================
