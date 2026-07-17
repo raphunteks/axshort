@@ -61,17 +61,15 @@ const REDIS_KEY_TOKENS = 'axa:tokens';
 // ==========================================
 // HELPER: GOOGLE DRIVE LINK CONVERTER
 // ==========================================
-// [SUPER BIG UPGRADE] Mengubah link sharing biasa menjadi Direct Stream Link
+// Mengubah link sharing biasa menjadi Direct Stream Link (Format iframe /preview)
 function convertGDriveLink(url) {
     if (!url || !url.includes('drive.google.com')) return url;
     
     let fileId = null;
-    // Cari pola URL: /file/d/FILE_ID/view
     const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
     if (match && match[1]) {
         fileId = match[1];
     } else {
-        // Cari pola URL: ?id=FILE_ID
         const matchId = url.match(/id=([a-zA-Z0-9_-]+)/);
         if (matchId && matchId[1]) {
             fileId = matchId[1];
@@ -79,8 +77,7 @@ function convertGDriveLink(url) {
     }
     
     if (fileId) {
-        // Return format streamable direct link
-        return `https://drive.google.com/uc?export=download&id=${fileId}`;
+        return `https://drive.google.com/file/d/${fileId}/preview`;
     }
     return url;
 }
@@ -101,24 +98,46 @@ app.get('/api/videos', async (req, res) => {
 app.post('/api/verify-token', async (req, res) => {
   try {
     const { videoId, token } = req.body;
-    if (!videoId || !token) return res.status(400).json({ valid: false, message: "Token required" });
+    if (!videoId || !token) return res.status(400).json({ valid: false, message: "Token required bosku!" });
 
-    const tokenData = await redis.hget(REDIS_KEY_TOKENS, token);
+    // [SUPER BIG UPGRADE] Auto-Clean: Basmi spasi tersembunyi & maksa huruf besar mutlak
+    const cleanToken = token.replace(/[^a-zA-Z0-9-]/g, '').toUpperCase();
+    console.log(`[VERIFY SYSTEM] Memvalidasi Lisensi: ${cleanToken} untuk Video: ${videoId}`);
 
-    if (tokenData && !tokenData.isUsed && (tokenData.videoId === videoId || tokenData.videoId === "ALL")) {
-      if(token !== "AXA2026") {
-          tokenData.isUsed = true;
-          await redis.hset(REDIS_KEY_TOKENS, { [token]: tokenData });
+    let tokenData = await redis.hget(REDIS_KEY_TOKENS, cleanToken);
+
+    // Failsafe jika stringify JSON
+    if (typeof tokenData === 'string') {
+        try { tokenData = JSON.parse(tokenData); } catch (e) {}
+    }
+
+    if (tokenData && !tokenData.isUsed) {
+      // Pastikan token diperuntukkan untuk video yang tepat
+      if (tokenData.videoId === videoId || tokenData.videoId === "ALL") {
+          
+          // Tandai HANGUS (terpakai) jika bukan Master Token
+          if (cleanToken !== "AXA2026") {
+              tokenData.isUsed = true;
+              await redis.hset(REDIS_KEY_TOKENS, { [cleanToken]: tokenData });
+              console.log(`[SUCCESS] Token ${cleanToken} sah dan HANGUS/TERPAKAI!`);
+          }
+          
+          // Ambil stream URL langsung dari database video
+          let videoData = await redis.hget(REDIS_KEY_VIDEOS, videoId);
+          if (typeof videoData === 'string') {
+              try { videoData = JSON.parse(videoData); } catch (e) {}
+          }
+          
+          const finalStreamUrl = videoData ? videoData.videoUrl : "https://sample-videos.com/video123.mp4";
+          return res.json({ valid: true, streamUrl: finalStreamUrl }); 
+      } else {
+          console.warn(`[DENIED] Token ${cleanToken} diperuntukkan untuk video ${tokenData.videoId}`);
+          return res.status(403).json({ valid: false, message: `Token Khusus Video ID: ${tokenData.videoId}` });
       }
-      
-      // Ambil stream URL langsung dari database video berdasarkan videoId
-      const videoData = await redis.hget(REDIS_KEY_VIDEOS, videoId);
-      const finalStreamUrl = videoData ? videoData.videoUrl : "https://sample-videos.com/video123.mp4";
-      
-      return res.json({ valid: true, streamUrl: finalStreamUrl }); 
     }
     
-    res.status(403).json({ valid: false, message: "Token Invalid atau Sudah Terpakai" });
+    console.warn(`[DENIED] Token ${cleanToken} tidak valid atau sudah HANGUS/TERPAKAI.`);
+    res.status(403).json({ valid: false, message: "Token Invalid atau SUDAH TERPAKAI (1x pakai aja bosku)!" });
   } catch (error) {
     console.error("Token Verification Error:", error);
     res.status(500).json({ valid: false, message: "Internal Server Error" });
@@ -147,7 +166,7 @@ app.post('/api/admin/videos', (req, res) => {
         if (err instanceof multer.MulterError) {
             if (err.code === 'LIMIT_FILE_SIZE') {
                 const limitText = isVercel ? '4.5MB (Limit Vercel Serverless)' : '100MB';
-                return res.status(400).json({ success: false, message: `GAGAL: File terlalu besar! Batas maksimal ${limitText}. Gunakan Opsi 2 (Paste URL Google Drive) untuk film panjang.` });
+                return res.status(400).json({ success: false, message: `GAGAL: File terlalu besar! Batas maksimal ${limitText}. Gunakan Opsi 2 (Paste URL Google Drive).` });
             }
             return res.status(400).json({ success: false, message: `Upload error: ${err.message}` });
         } else if (err) {
@@ -157,7 +176,6 @@ app.post('/api/admin/videos', (req, res) => {
         try {
             const { title, genre, isPremium, videoUrl, coverUrl } = req.body;
             
-            // [SUPER BIG UPGRADE] Eksekusi Konversi Link GDrive untuk Video dan Cover
             let finalVideoUrl = convertGDriveLink(videoUrl);
             if (req.files && req.files['videoFile']) {
                 finalVideoUrl = `/public/uploads/${req.files['videoFile'][0].filename}`;
@@ -220,7 +238,7 @@ app.get('/search', (req, res) => res.render('search'));
 app.get('/play/:id', (req, res) => res.render('play', { videoId: req.params.id }));
 app.get('/admin-dashboard', (req, res) => res.render('admin-dashboard'));
 
-// Global Error Handler
+// [SUPER BIG UPGRADE] Global Error Handler Diperbaiki (Mengatasi Kode Typo dari Copy-Paste)
 app.use((err, req, res, next) => {
     console.error("🔥 AXA SERVER CRASH:", err.stack);
     res.status(500).send(`
