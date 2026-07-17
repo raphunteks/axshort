@@ -2,10 +2,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <!-- [SUPER UPGRADE] Vercel Path Fix -->
     <%- include('./partials/header.html') %>
-    
-    <!-- [SUPER BIG UPGRADE] Force Load CSS dari Vercel / Github (Anti Blank) -->
     <link rel="stylesheet" href="/public/css/main.css">
 </head>
 <body>
@@ -17,33 +14,31 @@
 
     <main style="padding: 20px;">
         <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
-            <span class="clay-badge">Fiksi Ilmiah</span>
-            <span class="clay-badge">Romantis</span>
-            <span class="clay-badge">Aksi & Laga</span>
-            <span class="clay-badge">Horror</span>
-            <span class="clay-badge">Komedi</span>
+            <span class="clay-badge genre-filter">Fiksi Ilmiah</span>
+            <span class="clay-badge genre-filter">Romantis</span>
+            <span class="clay-badge genre-filter">Aksi</span>
+            <span class="clay-badge genre-filter">Horror</span>
+            <span class="clay-badge genre-filter">Komedi</span>
         </div>
         
-        <div class="glass-panel" style="margin-top: 30px; padding: 20px; text-align: center;">
-            <h3 style="color: var(--accent-cyan);">Katalog Lengkap</h3>
-            <p style="margin-top: 10px; font-size: 0.9rem;">Pilih genre di atas untuk memfilter konten eksklusif.</p>
+        <div class="glass-panel" style="margin-top: 30px; padding: 20px;">
+            <h3 style="color: var(--accent-cyan); text-align: center; margin-bottom: 20px;">Katalog Lengkap</h3>
+            
+            <!-- [SUPER UPGRADE] WADAH GRID VIDEO EXPLORE -->
+            <div id="explore-video-grid" class="video-grid" style="padding: 0;">
+                <p style="text-align:center; width:100%; color:var(--accent-cyan);">⏳ Menarik data server...</p>
+            </div>
         </div>
     </main>
 
-    <!-- [SUPER UPGRADE] Pakai exact path dan ekstensi .html buat Vercel EJS Compiler -->
     <%- include('./partials/footer.html') %>
+    <script src="/public/js/app.js"></script>
     <script>
-        // [SUPER BIG UPGRADE] - Safe DOM Manipulation Anti-Crash
-        // Mencegah error "Cannot read properties of undefined" saat partials belum di-render server
         document.addEventListener("DOMContentLoaded", () => {
             const navItems = document.querySelectorAll('.nav-item');
-            
-            // Cek apakah elemen navItems ada (minimal 2 elemen untuk index [1])
             if (navItems && navItems.length > 1) {
                 navItems.forEach(el => el.classList.remove('active'));
-                navItems[1].classList.add('active'); // Aktifkan menu 'Jelajahi'
-            } else {
-                console.warn("🔥 [AXA SYSTEM] Navigasi belum dirender. Ini normal jika lo buka di mode Preview AI/Canvas.");
+                navItems[1].classList.add('active');
             }
         });
     </script>
