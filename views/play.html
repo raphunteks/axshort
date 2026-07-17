@@ -34,21 +34,34 @@
         </div>
         
         <div style="margin-top: 25px;">
-            <!-- Judul dan deskripsi ditarik otomatis dari app.js berdasarkan ID -->
             <h2 id="play-title" style="color: var(--text-light); text-shadow: 0 0 5px rgba(255,255,255,0.3);">Memuat Judul...</h2>
             <p id="play-desc" style="color: #aaa; font-size: 0.9rem; margin-top: 10px; line-height: 1.6;">Memuat deskripsi film...</p>
         </div>
     </main>
 
-    <!-- Modal Token (Tampil dengan opacity dari CSS active) -->
+    <!-- [SUPER BIG UPGRADE] Modal Token dengan Class Baru (Glowing UI) -->
     <div id="tokenModal" class="modal-overlay">
-        <div class="modal-content glass-panel">
-            <h3 style="color: var(--accent-neon); margin-bottom: 15px;">Validasi Akses AXA</h3>
+        <div class="modal-content token-modal-box">
+            
+            <div style="margin-bottom: 25px;">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--accent-neon)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 5px var(--accent-neon));">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <h2 style="color: var(--accent-neon); margin-top: 10px; text-transform: uppercase; font-weight: 800; letter-spacing: 2px;">Akses VIP</h2>
+                <p style="font-size: 0.8rem; color: #888; margin-top: 5px;">Masukkan License Key AXA lo di bawah.</p>
+            </div>
+
             <input type="hidden" id="videoIdHolder" value="<%= videoId %>">
-            <input type="text" id="tokenInput" class="neu-glass-input" placeholder="Masukkan Kode Token..." style="width: 100%; margin-bottom: 15px; font-family: monospace; text-align: center; font-size: 1.1rem; text-transform: uppercase;">
-            <button id="verifyTokenBtn" class="btn-skeuo" style="width: 100%; margin-bottom: 15px;">Buka Video Sekarang</button>
-            <a href="https://t.me/AxaXyzBot" target="_blank" style="display: block; color: var(--accent-cyan); text-decoration: none; font-size: 0.9rem; margin-bottom: 15px; font-weight: bold;">[+] Dapatkan Token via Telegram</a>
-            <button id="closeModal" style="background:none; border:none; color:#ff3366; cursor:pointer; font-size: 0.85rem; font-weight: bold;">BATAL & TUTUP</button>
+            <input type="text" id="tokenInput" class="token-input-premium" placeholder="AXA-XXXXXX" autocomplete="off" autocorrect="off" autocapitalize="characters">
+            
+            <button id="verifyTokenBtn" class="btn-skeuo" style="width: 100%; margin-top: 20px; margin-bottom: 15px; padding: 15px; font-size: 1.1rem; letter-spacing: 1px;">BUKA VIDEO SEKARANG</button>
+            
+            <a href="https://t.me/AxaXyzBot" target="_blank" style="display: block; color: var(--accent-cyan); text-decoration: none; font-size: 0.9rem; margin-bottom: 20px; font-weight: bold; text-shadow: 0 0 5px rgba(0, 255, 255, 0.4);">
+                [+] Dapatkan Token via Telegram
+            </a>
+            
+            <button id="closeModal" style="background:none; border:none; color:#ff3366; cursor:pointer; font-size: 0.85rem; font-weight: bold; padding: 10px;">&times; BATAL & TUTUP</button>
         </div>
     </div>
 
