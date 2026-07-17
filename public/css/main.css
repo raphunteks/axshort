@@ -1,5 +1,5 @@
 /* FILE: public/css/main.css */
-/* Menambahkan Update File Input Custom Style */
+/* AXA XYZ UI/UX & CSS3 STYLE GUIDE REFERENCE */
 
 :root {
   --bg-navy: #050510;
@@ -273,3 +273,19 @@ input:checked + .slider:before {
 .form-label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #ccc; }
 .text-neon { color: var(--accent-neon); }
 .text-cyan { color: var(--accent-cyan); }
+
+/* Grid Videos (For Public Frontend) */
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+  padding: 16px;
+}
+.video-card-img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-bottom: 1px solid var(--glass-border);
+}
+.video-info { padding: 12px; }
+.video-title { font-size: 1rem; margin-bottom: 8px; }
