@@ -24,11 +24,11 @@ body {
 }
 
 body:not(.admin-body) {
-  padding-bottom: 80px; /* Space for bottom nav in public */
+  padding-bottom: 80px; 
 }
 
 /* ==========================================
-   A. GLASSMORPHISM (Efek Kaca Frosted)
+   A. GLASSMORPHISM
    ========================================== */
 .glass-panel {
   background: var(--glass-bg);
@@ -40,7 +40,52 @@ body:not(.admin-body) {
 }
 
 /* ==========================================
-   B. NEU-GLASSMORPHISM (Tombol Aktif/Input)
+   [SUPER BIG UPGRADE] B. MODAL TOKEN PREMIUM (NEON GLOW)
+   ========================================== */
+.token-modal-box {
+    background: rgba(5, 5, 16, 0.95);
+    border: 2px solid var(--accent-neon);
+    box-shadow: 0 0 20px rgba(0, 255, 128, 0.3), inset 0 0 15px rgba(0,255,128,0.1);
+    border-radius: 24px;
+    padding: 35px 25px;
+    position: relative;
+    overflow: hidden;
+    animation: modalGlow 2s infinite alternate;
+}
+@keyframes modalGlow {
+    0% { box-shadow: 0 0 20px rgba(0, 255, 128, 0.3), inset 0 0 15px rgba(0,255,128,0.1); }
+    100% { box-shadow: 0 0 40px rgba(0, 255, 128, 0.6), inset 0 0 30px rgba(0,255,128,0.2); }
+}
+
+.token-input-premium {
+    background: #000;
+    border: 1px dashed var(--accent-neon);
+    color: var(--accent-neon);
+    font-size: 1.5rem;
+    letter-spacing: 4px;
+    text-align: center;
+    text-transform: uppercase;
+    box-shadow: inset 0 0 10px rgba(0,255,128,0.2);
+    border-radius: 12px;
+    padding: 15px;
+    width: 100%;
+    outline: none;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+.token-input-premium:focus {
+    border: 1px solid var(--accent-neon);
+    box-shadow: inset 0 0 20px rgba(0,255,128,0.5), 0 0 20px rgba(0,255,128,0.5);
+    background: rgba(0,255,128,0.05);
+}
+.token-input-premium::placeholder {
+    color: rgba(0, 255, 128, 0.3);
+    font-size: 1rem;
+    letter-spacing: 1px;
+}
+
+/* ==========================================
+   C. CLAYMORPHISM, BLOB, HOLO, SKEUO (TETAP SAMA)
    ========================================== */
 .neu-glass-input {
   background: rgba(255, 255, 255, 0.03);
@@ -54,76 +99,41 @@ body:not(.admin-body) {
   width: 100%;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
-.neu-glass-input:focus {
-  border-color: var(--accent-neon);
-}
-select.neu-glass-input option {
-  background: var(--bg-navy);
-  color: var(--text-light);
-}
+.neu-glass-input:focus { border-color: var(--accent-neon); }
+select.neu-glass-input option { background: var(--bg-navy); color: var(--text-light); }
 
-/* [SUPER BIG UPGRADE] Custom File Input Style (Glassmorphism & Neon) */
 .neu-glass-file {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(10px);
   border: 1px dashed rgba(0, 255, 128, 0.5);
   border-radius: 12px;
   color: var(--text-light);
-  padding: 10px;
-  width: 100%;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.9rem;
+  padding: 10px; width: 100%; cursor: pointer; transition: all 0.3s ease; font-size: 0.9rem;
 }
 .neu-glass-file::file-selector-button {
   background: linear-gradient(145deg, #060613, #04040d);
-  color: var(--accent-neon);
-  border: 1px solid var(--accent-neon);
-  padding: 8px 16px;
-  border-radius: 8px;
-  margin-right: 15px;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
-  transition: all 0.3s ease;
+  color: var(--accent-neon); border: 1px solid var(--accent-neon);
+  padding: 8px 16px; border-radius: 8px; margin-right: 15px; font-weight: bold;
+  cursor: pointer; box-shadow: 2px 2px 5px rgba(0,0,0,0.5); transition: all 0.3s ease;
 }
 .neu-glass-file::file-selector-button:hover {
-  background: var(--accent-neon);
-  color: #000;
-  box-shadow: 0 0 15px rgba(0,255,128,0.5);
+  background: var(--accent-neon); color: #000; box-shadow: 0 0 15px rgba(0,255,128,0.5);
 }
-.neu-glass-file:hover {
-    border-color: var(--accent-neon);
-    background: rgba(0, 255, 128, 0.05);
-}
+.neu-glass-file:hover { border-color: var(--accent-neon); background: rgba(0, 255, 128, 0.05); }
 
-/* ==========================================
-   C. CLAYMORPHISM (Badge/Genre)
-   ========================================== */
 .clay-badge {
   background: rgba(25, 25, 25, 0.8);
-  border-radius: 20px;
-  padding: 6px 14px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  color: var(--accent-cyan);
+  border-radius: 20px; padding: 6px 14px; font-size: 0.8rem; font-weight: bold; color: var(--accent-cyan);
   box-shadow: 8px 8px 16px rgba(0,0,0,0.4), inset -4px -4px 8px rgba(0, 0, 0, 0.2), inset 4px 4px 8px rgba(255, 255, 255, 0.08);
-  transition: transform 0.3s ease;
-  display: inline-block;
+  transition: transform 0.3s ease; display: inline-block;
 }
 .clay-badge:hover { transform: translateY(-2px); }
 .clay-badge.success { color: var(--accent-neon); }
 .clay-badge.danger { color: #ff3366; }
 
-/* ==========================================
-   D. BLOB ANIMATION (Background)
-   ========================================== */
 .blob-bg {
-  position: fixed;
-  top: -10%; right: -10%;
-  width: 300px; height: 300px;
-  background: radial-gradient(circle, rgba(0,255,128,0.15) 0%, rgba(0,0,0,0) 70%);
-  z-index: -1;
+  position: fixed; top: -10%; right: -10%; width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(0,255,128,0.15) 0%, rgba(0,0,0,0) 70%); z-index: -1;
   animation: blobBounce 10s infinite alternate;
 }
 @keyframes blobBounce {
@@ -133,159 +143,61 @@ select.neu-glass-input option {
   100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: scale(1); }
 }
 
-/* ==========================================
-   E. HOLOGRAPHIC UI & NEON GLOW
-   ========================================== */
 .holo-card {
-  position: relative;
-  border-radius: 16px;
-  overflow: hidden;
+  position: relative; border-radius: 16px; overflow: hidden;
   background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%, rgba(0, 255, 128, 0.1) 100%);
-  border: 1px solid var(--accent-neon);
-  box-shadow: 0 0 10px rgba(0, 255, 128, 0.1);
-  transition: all 0.3s ease;
+  border: 1px solid var(--accent-neon); box-shadow: 0 0 10px rgba(0, 255, 128, 0.1); transition: all 0.3s ease;
 }
 .holo-card:hover {
-  box-shadow: 0 0 15px rgba(0, 255, 128, 0.4), 0 0 30px rgba(0, 255, 128, 0.2);
-  transform: translateY(-5px);
+  box-shadow: 0 0 15px rgba(0, 255, 128, 0.4), 0 0 30px rgba(0, 255, 128, 0.2); transform: translateY(-5px);
 }
 
-/* ==========================================
-   F. SKEUOMORPHISM MODERN (Tombol & Toggle)
-   ========================================== */
 .btn-skeuo {
-  background: linear-gradient(145deg, #060613, #04040d);
-  border: none;
-  border-radius: 12px;
-  color: var(--accent-neon);
-  font-weight: 700;
-  padding: 12px 24px;
-  box-shadow: 5px 5px 10px #020206, -5px -5px 10px #08081a;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  width: 100%;
+  background: linear-gradient(145deg, #060613, #04040d); border: none; border-radius: 12px;
+  color: var(--accent-neon); font-weight: 700; padding: 12px 24px;
+  box-shadow: 5px 5px 10px #020206, -5px -5px 10px #08081a; cursor: pointer; transition: all 0.2s ease; width: 100%;
 }
-.btn-skeuo:active {
-  box-shadow: inset 5px 5px 10px #020206, inset -5px -5px 10px #08081a;
-  color: #00cc66;
-}
+.btn-skeuo:active { box-shadow: inset 5px 5px 10px #020206, inset -5px -5px 10px #08081a; color: #00cc66; }
 
-/* Skeuomorphic Toggle Switch */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 60px; height: 34px;
-}
+.switch { position: relative; display: inline-block; width: 60px; height: 34px; }
 .switch input { opacity: 0; width: 0; height: 0; }
 .slider {
-  position: absolute; cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
+  position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
   background: linear-gradient(145deg, #111, #222);
   box-shadow: inset 2px 2px 5px rgba(0,0,0,0.8), inset -2px -2px 5px rgba(255,255,255,0.1);
-  transition: .4s;
-  border-radius: 34px;
+  transition: .4s; border-radius: 34px;
 }
 .slider:before {
-  position: absolute; content: "";
-  height: 26px; width: 26px;
-  left: 4px; bottom: 4px;
-  background: #444;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.5), inset 2px 2px 4px rgba(255,255,255,0.2);
-  transition: .4s;
-  border-radius: 50%;
+  position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px;
+  background: #444; box-shadow: 2px 2px 5px rgba(0,0,0,0.5), inset 2px 2px 4px rgba(255,255,255,0.2);
+  transition: .4s; border-radius: 50%;
 }
-input:checked + .slider {
-  background: var(--accent-neon);
-  box-shadow: 0 0 15px rgba(0,255,128,0.5), inset 2px 2px 5px rgba(0,0,0,0.3);
-}
-input:checked + .slider:before {
-  transform: translateX(26px);
-  background: #fff;
-}
+input:checked + .slider { background: var(--accent-neon); box-shadow: 0 0 15px rgba(0,255,128,0.5), inset 2px 2px 5px rgba(0,0,0,0.3); }
+input:checked + .slider:before { transform: translateX(26px); background: #fff; }
 
-/* ==========================================
-   ADMIN LAYOUT & COMPONENTS
-   ========================================== */
-.admin-header {
-  padding: 20px 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--glass-border);
-  background: rgba(0,0,0,0.5);
-  backdrop-filter: blur(10px);
-}
-.admin-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
-  padding: 20px;
-}
-@media(min-width: 768px) {
-  .admin-grid { grid-template-columns: repeat(2, 1fr); }
-  .admin-stats { grid-column: span 2; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-}
+.admin-header { padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); }
+.admin-grid { display: grid; grid-template-columns: 1fr; gap: 20px; padding: 20px; }
+@media(min-width: 768px) { .admin-grid { grid-template-columns: repeat(2, 1fr); } .admin-stats { grid-column: span 2; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; } }
+.table-container { overflow-x: auto; border-radius: 12px; }
+.glass-table { width: 100%; border-collapse: collapse; text-align: left; }
+.glass-table th { background: rgba(255,255,255,0.05); padding: 15px; font-weight: 600; color: var(--accent-cyan); border-bottom: 1px solid var(--glass-border); }
+.glass-table td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.02); color: #ddd; }
+.glass-table tr:hover { background: rgba(0,255,128,0.05); }
 
-/* Glass Table */
-.table-container {
-  overflow-x: auto;
-  border-radius: 12px;
-}
-.glass-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-}
-.glass-table th {
-  background: rgba(255,255,255,0.05);
-  padding: 15px;
-  font-weight: 600;
-  color: var(--accent-cyan);
-  border-bottom: 1px solid var(--glass-border);
-}
-.glass-table td {
-  padding: 15px;
-  border-bottom: 1px solid rgba(255,255,255,0.02);
-  color: #ddd;
-}
-.glass-table tr:hover {
-  background: rgba(0,255,128,0.05);
-}
+.bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; justify-content: space-around; padding: 15px 0; z-index: 1000; border-top-left-radius: 24px; border-top-right-radius: 24px; }
+.nav-item { color: #888; text-decoration: none; display: flex; flex-direction: column; align-items: center; font-size: 0.75rem; transition: all 0.3s ease; }
+.nav-item.active, .nav-item:hover { color: var(--accent-neon); text-shadow: 0 0 8px rgba(0, 255, 128, 0.6); }
 
-/* Bottom Nav Public */
-.bottom-nav {
-  position: fixed; bottom: 0; left: 0; width: 100%;
-  display: flex; justify-content: space-around;
-  padding: 15px 0; z-index: 1000;
-  border-top-left-radius: 24px; border-top-right-radius: 24px;
-}
-.nav-item {
-  color: #888; text-decoration: none;
-  display: flex; flex-direction: column; align-items: center;
-  font-size: 0.75rem; transition: all 0.3s ease;
-}
-.nav-item.active, .nav-item:hover {
-  color: var(--accent-neon); text-shadow: 0 0 8px rgba(0, 255, 128, 0.6);
-}
-
-/* Helpers */
 .form-group { margin-bottom: 15px; }
 .form-label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #ccc; }
 .text-neon { color: var(--accent-neon); }
 .text-cyan { color: var(--accent-cyan); }
 
-/* Grid Videos (For Public Frontend) */
-.video-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 16px;
-  padding: 16px;
-}
-.video-card-img {
-  width: 100%;
-  height: 220px;
-  object-fit: cover;
-  border-bottom: 1px solid var(--glass-border);
-}
+.video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; padding: 16px; }
+.video-card-img { width: 100%; height: 220px; object-fit: cover; border-bottom: 1px solid var(--glass-border); }
 .video-info { padding: 12px; }
 .video-title { font-size: 1rem; margin-bottom: 8px; }
+
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
+.modal-content { width: 90%; max-width: 400px; padding: 24px; text-align: center; }
