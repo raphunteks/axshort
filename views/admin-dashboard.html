@@ -9,7 +9,6 @@
 <body class="admin-body">
     <div class="blob-bg"></div>
 
-    <!-- LANDING PAGE ADMIN LOGIN OVERLAY -->
     <div id="loginOverlay" style="position: fixed; top:0; left:0; width:100%; height:100vh; z-index: 9999; display: flex; align-items: center; justify-content: center; background: rgba(5, 5, 16, 0.95); backdrop-filter: blur(20px); transition: opacity 0.3s ease;">
         <div class="glass-panel" style="padding: 40px; width: 90%; max-width: 400px; text-align: center;">
             <h2 class="text-neon" style="margin-bottom: 10px; text-shadow: 0 0 10px rgba(0,255,128,0.5);">AXA SYSTEM</h2>
@@ -27,7 +26,6 @@
         </div>
     </div>
 
-    <!-- WRAPPER UNTUK KONTEN DASHBOARD -->
     <div id="dashboardWrapper" style="display: none; opacity: 0; transition: opacity 0.5s ease;">
         <header class="admin-header">
             <div>
@@ -38,7 +36,6 @@
         </header>
 
         <main class="admin-grid">
-            <!-- STATS ROW -->
             <div class="admin-stats" id="statsContainer">
                 <div class="holo-card" style="padding: 20px;">
                     <h4 class="text-cyan">Total Video</h4>
@@ -58,7 +55,6 @@
                 </div>
             </div>
 
-            <!-- FORM UPLOAD VIDEO [UPGRADED: BISA UPLOAD FILE COVER & VIDEO] -->
             <div class="glass-panel" style="padding: 25px;">
                 <h3 class="text-cyan" style="margin-bottom: 20px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">🎥 Upload Video Baru</h3>
                 
@@ -78,7 +74,6 @@
                         </select>
                     </div>
                     
-                    <!-- [SUPER UPGRADE] OPSI COVER IMAGE -->
                     <div style="background: rgba(0, 255, 255, 0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(0, 255, 255, 0.3); margin-bottom: 15px;">
                         <p style="color: var(--accent-cyan); font-size: 0.85rem; margin-bottom: 5px; font-weight: bold;">PILIH SUMBER COVER GAMBAR (Pilih Salah Satu)</p>
                         <p style="color: #aaa; font-size: 0.75rem; margin-bottom: 10px;">Rekomendasi: JPG, PNG, HEIC. Rasio 16:9 atau Vertikal 9:16 (Maks 5MB).</p>
@@ -93,15 +88,15 @@
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label">Opsi 2: Paste URL Gambar External</label>
+                            <label class="form-label">Opsi 2: Paste URL Gambar External <span style="color:var(--accent-cyan);">(Support Google Drive Link!)</span></label>
                             <input type="url" id="vidCoverUrl" class="neu-glass-input" placeholder="https://domain.com/cover.jpg">
                         </div>
                     </div>
 
-                    <!-- [SUPER UPGRADE] OPSI VIDEO -->
+                    <!-- [SUPER UPGRADE] OPSI VIDEO GOOGLE DRIVE -->
                     <div style="background: rgba(0, 255, 128, 0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(0, 255, 128, 0.3); margin-bottom: 15px;">
                         <p style="color: var(--accent-neon); font-size: 0.85rem; margin-bottom: 5px; font-weight: bold;">PILIH SUMBER VIDEO (Pilih Salah Satu)</p>
-                        <p style="color: #aaa; font-size: 0.75rem; margin-bottom: 10px;">⚠️ Batas Maksimal Upload: <strong style="color: var(--accent-neon);">100MB</strong> per file. Format: MP4, MOV. (Video lebih besar harap gunakan Opsi 2 / URL).</p>
+                        <p style="color: #aaa; font-size: 0.75rem; margin-bottom: 10px;">⚠️ Batas Maksimal Upload: <strong style="color: var(--accent-neon);">100MB</strong> per file. Format: MP4, MOV. (Video lebih besar harap gunakan Opsi 2).</p>
                         
                         <div class="form-group">
                             <label class="form-label">Opsi 1: Upload File Langsung (MP4, MOV)</label>
@@ -113,8 +108,8 @@
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label">Opsi 2: Paste URL Video External</label>
-                            <input type="url" id="vidUrl" class="neu-glass-input" placeholder="https://domain.com/video.mp4">
+                            <label class="form-label">Opsi 2: Paste URL Video External <span style="color:var(--accent-neon); font-weight:bold;">(SUPPORT GOOGLE DRIVE LINK!)</span></label>
+                            <input type="url" id="vidUrl" class="neu-glass-input" placeholder="Contoh: https://drive.google.com/file/d/ID_VIDEO/view?usp=sharing">
                         </div>
                     </div>
 
@@ -129,7 +124,6 @@
                 </form>
             </div>
 
-            <!-- FORM GENERATE TOKEN -->
             <div class="glass-panel" style="padding: 25px;">
                 <h3 class="text-cyan" style="margin-bottom: 20px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">🔑 Generate Access Token</h3>
                 <form id="generateTokenForm">
@@ -151,7 +145,6 @@
                 </form>
             </div>
 
-            <!-- TABEL TOKEN -->
             <div class="glass-panel" style="grid-column: 1 / -1; padding: 25px;">
                 <h3 class="text-neon" style="margin-bottom: 20px;">Daftar Token Terbaru</h3>
                 <div class="table-container">
