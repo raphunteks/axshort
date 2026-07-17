@@ -1,7 +1,8 @@
 <!-- FILE: views/search.html -->
 <!DOCTYPE html>
 <html lang="id">
-<%- include('partials/header') %>
+<!-- [SUPER UPGRADE] Vercel Path Fix -->
+<%- include('./partials/header.html') %>
 <body>
     <div class="blob-bg"></div>
     
@@ -13,10 +14,16 @@
         <button class="btn-skeuo" style="width: 100%; max-width: 400px;">Cari Sekarang</button>
     </main>
 
-    <%- include('partials/footer') %>
+    <!-- [SUPER UPGRADE] Vercel Path Fix -->
+    <%- include('./partials/footer.html') %>
     <script>
-        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.nav-item')[2].classList.add('active');
+        document.addEventListener("DOMContentLoaded", () => {
+            const navItems = document.querySelectorAll('.nav-item');
+            if (navItems && navItems.length > 2) {
+                navItems.forEach(el => el.classList.remove('active'));
+                navItems[2].classList.add('active');
+            }
+        });
     </script>
 </body>
 </html>
