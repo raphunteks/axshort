@@ -1,0 +1,44 @@
+<!-- FILE: views/explore.html -->
+<!DOCTYPE html>
+<html lang="id">
+<%- include('partials/header') %>
+<body>
+    <div class="blob-bg"></div>
+    
+    <header style="padding: 20px; text-align: center;">
+        <h2>Jelajahi Kategori</h2>
+    </header>
+
+    <main style="padding: 20px;">
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+            <span class="clay-badge">Fiksi Ilmiah</span>
+            <span class="clay-badge">Romantis</span>
+            <span class="clay-badge">Aksi & Laga</span>
+            <span class="clay-badge">Horror</span>
+            <span class="clay-badge">Komedi</span>
+        </div>
+        
+        <div class="glass-panel" style="margin-top: 30px; padding: 20px; text-align: center;">
+            <h3 style="color: var(--accent-cyan);">Katalog Lengkap</h3>
+            <p style="margin-top: 10px; font-size: 0.9rem;">Pilih genre di atas untuk memfilter konten eksklusif.</p>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+    <script>
+        // [SUPER BIG UPGRADE] - Safe DOM Manipulation Anti-Crash
+        // Mencegah error "Cannot read properties of undefined" saat partials belum di-render server
+        document.addEventListener("DOMContentLoaded", () => {
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            // Cek apakah elemen navItems ada (minimal 2 elemen untuk index [1])
+            if (navItems && navItems.length > 1) {
+                navItems.forEach(el => el.classList.remove('active'));
+                navItems[1].classList.add('active'); // Aktifkan menu 'Jelajahi'
+            } else {
+                console.warn("🔥 [AXA SYSTEM] Navigasi belum dirender. Ini normal jika lo buka di mode Preview AI/Canvas.");
+            }
+        });
+    </script>
+</body>
+</html>

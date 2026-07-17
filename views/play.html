@@ -1,0 +1,50 @@
+<!-- FILE: views/play.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <%- include('partials/header') %>
+    <!-- Khusus Player Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "VideoObject",
+      "name": "AXA Premium Stream",
+      "description": "Nonton konten eksklusif berlisensi.",
+      "thumbnailUrl": "https://axashortplus.com/img/axalogo.png",
+      "uploadDate": "2026-07-17T08:00:00+08:00"
+    }
+    </script>
+</head>
+<body>
+    <div class="blob-bg"></div>
+    
+    <main style="padding: 20px;">
+        <a href="/" style="color: var(--accent-cyan); text-decoration: none; display: inline-block; margin-bottom: 20px;">&larr; Kembali</a>
+        
+        <div id="player-container" class="glass-panel" style="height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px;">
+            <h3 style="color: var(--accent-neon); margin-bottom: 10px;">Konten Terkunci</h3>
+            <p style="font-size: 0.85rem; margin-bottom: 20px;">Lo butuh Access Token buat nonton film ini.</p>
+            <button class="btn-skeuo" onclick="triggerPremiumUnlock('<%= videoId %>')">Masukkan Token</button>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <h2>Judul Film (ID: <%= videoId %>)</h2>
+            <p style="color: #888; font-size: 0.9rem; margin-top: 8px;">Deskripsi film premium yang penuh aksi dan plot twist. Beli token di Telegram resmi untuk membuka akses penuh ke database film kami.</p>
+        </div>
+    </main>
+
+    <!-- Modal Token -->
+    <div id="tokenModal" class="modal-overlay">
+        <div class="modal-content glass-panel">
+            <h3 style="color: var(--accent-neon); margin-bottom: 15px;">Validasi Akses</h3>
+            <input type="hidden" id="videoIdHolder" value="<%= videoId %>">
+            <input type="text" id="tokenInput" class="neu-glass-input" placeholder="Masukkan Token" style="width: 100%; margin-bottom: 15px;">
+            <button id="verifyTokenBtn" class="btn-skeuo" style="width: 100%; margin-bottom: 10px;">Buka Video</button>
+            <a href="https://t.me/AxaXyzBot" target="_blank" style="display: block; color: var(--accent-cyan); text-decoration: none; font-size: 0.9rem; margin-top: 15px;">Get Token via Telegram</a>
+            <button id="closeModal" style="background:none; border:none; color:#888; margin-top:15px; cursor:pointer;">Batal</button>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!-- FILE: views/index.html -->
+<!DOCTYPE html>
+<html lang="id">
+<%- include('partials/header') %>
+<body>
+    <div class="blob-bg"></div>
+    
+    <header style="padding: 20px; text-align: center;">
+        <h1 style="color: var(--accent-neon); text-shadow: 0 0 10px rgba(0,255,128,0.5);">AXA SHORT+</h1>
+        <p style="font-size: 0.9rem; color: #aaa;">Premium Video On Demand</p>
+    </header>
+
+    <main style="padding-bottom: 20px;">
+        <h2 style="padding: 0 16px; margin-bottom: 10px;">Trending Now</h2>
+        <div id="home-video-grid" class="video-grid">
+            <!-- Data dari API akan dirender ke sini via JS -->
+            <p style="text-align:center; width:100%;">Memuat film...</p>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+</html>
