@@ -2,10 +2,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <!-- [SUPER UPGRADE] Vercel Path Fix -->
     <%- include('./partials/header.html') %>
-    
-    <!-- [SUPER BIG UPGRADE] Force Load CSS dari Vercel / Github (Anti Blank) -->
     <link rel="stylesheet" href="/public/css/main.css">
 </head>
 <body>
@@ -18,13 +15,15 @@
 
     <main style="padding-bottom: 20px;">
         <h2 style="padding: 0 16px; margin-bottom: 10px;">Trending Now</h2>
+        <!-- WADAH GRID VIDEO: Akan diisi otomatis oleh app.js -->
         <div id="home-video-grid" class="video-grid">
-            <!-- Data dari API akan dirender ke sini via JS -->
-            <p style="text-align:center; width:100%;">Memuat film...</p>
+            <p style="text-align:center; width:100%; color:var(--accent-cyan);">⏳ Memuat film dari Database...</p>
         </div>
     </main>
 
-    <!-- [SUPER UPGRADE] Vercel Path Fix -->
     <%- include('./partials/footer.html') %>
+    
+    <!-- Pastikan Script Engine Jalan Terakhir -->
+    <script src="/public/js/app.js"></script>
 </body>
 </html>
