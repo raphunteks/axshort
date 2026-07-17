@@ -2,13 +2,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <%- include('partials/header') %>
-    <title>CMS Admin | AXA SHORT+</title>
-</head>
-<body class="admin-body"><!-- FILE: views/admin-dashboard.html -->
-<!DOCTYPE html>
-<html lang="id">
-<head>
     <%- include('./partials/header.html') %>
     
     <!-- [SUPER BIG UPGRADE] Force Load CSS dari Vercel / Github (Anti Blank) -->
@@ -19,231 +12,138 @@
 <body class="admin-body">
     <div class="blob-bg"></div>
 
-    <header class="admin-header">
-        <div>
-            <h2 class="text-neon" style="text-shadow: 0 0 10px rgba(0,255,128,0.5);">AXA DASHBOARD</h2>
-            <p style="font-size: 0.8rem; color: #aaa;">Creator & Token Management System</p>
-        </div>
-        <a href="/" class="clay-badge" style="text-decoration:none;">&larr; Ke Frontend</a>
-    </header>
-
-    <main class="admin-grid">
-        <!-- STATS ROW -->
-        <div class="admin-stats" id="statsContainer">
-            <div class="holo-card" style="padding: 20px;">
-                <h4 class="text-cyan">Total Video</h4>
-                <h1 id="statTotalVideo" class="text-neon" style="font-size: 2.5rem;">0</h1>
-            </div>
-            <div class="holo-card" style="padding: 20px;">
-                <h4 class="text-cyan">Total Token</h4>
-                <h1 id="statTotalToken" class="text-neon" style="font-size: 2.5rem;">0</h1>
-            </div>
-            <div class="holo-card" style="padding: 20px;">
-                <h4 class="text-cyan">Token Aktif (Unused)</h4>
-                <h1 id="statActiveToken" class="text-neon" style="font-size: 2.5rem;">0</h1>
-            </div>
-            <div class="holo-card" style="padding: 20px;">
-                <h4 class="text-cyan">Total Views</h4>
-                <h1 id="statViews" class="text-neon" style="font-size: 2.5rem;">0</h1>
-            </div>
-        </div>
-
-        <!-- FORM UPLOAD VIDEO -->
-        <div class="glass-panel" style="padding: 25px;">
-            <h3 class="text-cyan" style="margin-bottom: 20px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">🎥 Upload Video Baru</h3>
-            <form id="addVideoForm">
+    <!-- [SUPER BIG UPGRADE] LANDING PAGE ADMIN LOGIN OVERLAY -->
+    <div id="loginOverlay" style="position: fixed; top:0; left:0; width:100%; height:100vh; z-index: 9999; display: flex; align-items: center; justify-content: center; background: rgba(5, 5, 16, 0.95); backdrop-filter: blur(20px); transition: opacity 0.3s ease;">
+        <div class="glass-panel" style="padding: 40px; width: 90%; max-width: 400px; text-align: center;">
+            <h2 class="text-neon" style="margin-bottom: 10px; text-shadow: 0 0 10px rgba(0,255,128,0.5);">AXA SYSTEM</h2>
+            <p style="color: #aaa; margin-bottom: 30px; font-size: 0.9rem;">Masukkan kredensial khusus bosku.</p>
+            <form id="adminLoginForm">
                 <div class="form-group">
-                    <label class="form-label">Judul Film</label>
-                    <input type="text" id="vidTitle" class="neu-glass-input" placeholder="Contoh: The Neon Hack" required>
+                    <input type="text" id="adminUser" class="neu-glass-input" placeholder="Username" required>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Genre</label>
-                    <select id="vidGenre" class="neu-glass-input" required>
-                        <option value="Fiksi Ilmiah">Fiksi Ilmiah</option>
-                        <option value="Aksi">Aksi & Laga</option>
-                        <option value="Romantis">Romantis</option>
-                        <option value="Horror">Horror</option>
-                        <option value="Komedi">Komedi</option>
-                    </select>
+                <div class="form-group" style="margin-top: 15px;">
+                    <input type="password" id="adminPass" class="neu-glass-input" placeholder="Password" required>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Cover Image URL</label>
-                    <input type="url" id="vidCover" class="neu-glass-input" placeholder="https://..." required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Video Stream URL</label>
-                    <input type="url" id="vidUrl" class="neu-glass-input" placeholder="https://..." required>
-                </div>
-                <div class="form-group" style="display: flex; align-items: center; gap: 15px;">
-                    <label class="form-label" style="margin:0;">Jadikan Konten Premium? (Butuh Token)</label>
-                    <label class="switch">
-                        <input type="checkbox" id="vidPremium" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <button type="submit" class="btn-skeuo" style="margin-top: 10px;">Simpan Video ke Database</button>
+                <button type="submit" class="btn-skeuo" style="margin-top: 25px; width: 100%;">Login Dashboard</button>
             </form>
+            <a href="/" style="display: inline-block; margin-top: 20px; color: var(--accent-cyan); font-size: 0.85rem; text-decoration: none;">&larr; Kembali ke Web Publik</a>
         </div>
+    </div>
 
-        <!-- FORM GENERATE TOKEN -->
-        <div class="glass-panel" style="padding: 25px;">
-            <h3 class="text-cyan" style="margin-bottom: 20px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">🔑 Generate Access Token</h3>
-            <form id="generateTokenForm">
-                <div class="form-group">
-                    <label class="form-label">Pilih Video yang Diberi Akses</label>
-                    <select id="tokenVideoId" class="neu-glass-input" required>
-                        <option value="ALL">Semua Video (Master/VIP Token)</option>
-                        <!-- Dynamic options loaded by JS -->
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Custom Prefix (Awalan Token)</label>
-                    <input type="text" id="tokenPrefix" class="neu-glass-input" placeholder="Contoh: AXA, VIP, TIKTOK" value="AXA" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Jumlah Token yang Ingin Dicetak</label>
-                    <input type="number" id="tokenCount" class="neu-glass-input" value="10" min="1" max="100" required>
-                </div>
-                <button type="submit" class="btn-skeuo" style="margin-top: 25px;">Generate & Cetak Token</button>
-            </form>
-        </div>
-
-        <!-- TABEL TOKEN -->
-        <div class="glass-panel" style="grid-column: 1 / -1; padding: 25px;">
-            <h3 class="text-neon" style="margin-bottom: 20px;">Daftar Token Terbaru</h3>
-            <div class="table-container">
-                <table class="glass-table">
-                    <thead>
-                        <tr>
-                            <th>Kode Token</th>
-                            <th>Akses Video ID</th>
-                            <th>Status</th>
-                            <th>Dibuat Pada</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tokenTableBody">
-                        <tr><td colspan="4" style="text-align:center;">Memuat data...</td></tr>
-                    </tbody>
-                </table>
+    <!-- WRAPPER UNTUK KONTEN DASHBOARD (AWALNYA DI-HIDE) -->
+    <div id="dashboardWrapper" style="display: none; opacity: 0; transition: opacity 0.5s ease;">
+        <header class="admin-header">
+            <div>
+                <h2 class="text-neon" style="text-shadow: 0 0 10px rgba(0,255,128,0.5);">AXA DASHBOARD</h2>
+                <p style="font-size: 0.8rem; color: #aaa;">Creator & Token Management System</p>
             </div>
-        </div>
-    </main>
+            <a href="/" class="clay-badge" style="text-decoration:none;">&larr; Ke Frontend</a>
+        </header>
 
-    <script src="/js/admin.js"></script>
-</body>
-</html>
-    <div class="blob-bg"></div>
-
-    <header class="admin-header">
-        <div>
-            <h2 class="text-neon" style="text-shadow: 0 0 10px rgba(0,255,128,0.5);">AXA DASHBOARD</h2>
-            <p style="font-size: 0.8rem; color: #aaa;">Creator & Token Management System</p>
-        </div>
-        <a href="/" class="clay-badge" style="text-decoration:none;">&larr; Ke Frontend</a>
-    </header>
-
-    <main class="admin-grid">
-        <!-- STATS ROW -->
-        <div class="admin-stats" id="statsContainer">
-            <div class="holo-card" style="padding: 20px;">
-                <h4 class="text-cyan">Total Video</h4>
-                <h1 id="statTotalVideo" class="text-neon" style="font-size: 2.5rem;">0</h1>
+        <main class="admin-grid">
+            <!-- STATS ROW -->
+            <div class="admin-stats" id="statsContainer">
+                <div class="holo-card" style="padding: 20px;">
+                    <h4 class="text-cyan">Total Video</h4>
+                    <h1 id="statTotalVideo" class="text-neon" style="font-size: 2.5rem;">0</h1>
+                </div>
+                <div class="holo-card" style="padding: 20px;">
+                    <h4 class="text-cyan">Total Token</h4>
+                    <h1 id="statTotalToken" class="text-neon" style="font-size: 2.5rem;">0</h1>
+                </div>
+                <div class="holo-card" style="padding: 20px;">
+                    <h4 class="text-cyan">Token Aktif (Unused)</h4>
+                    <h1 id="statActiveToken" class="text-neon" style="font-size: 2.5rem;">0</h1>
+                </div>
+                <div class="holo-card" style="padding: 20px;">
+                    <h4 class="text-cyan">Total Views</h4>
+                    <h1 id="statViews" class="text-neon" style="font-size: 2.5rem;">0</h1>
+                </div>
             </div>
-            <div class="holo-card" style="padding: 20px;">
-                <h4 class="text-cyan">Total Token</h4>
-                <h1 id="statTotalToken" class="text-neon" style="font-size: 2.5rem;">0</h1>
-            </div>
-            <div class="holo-card" style="padding: 20px;">
-                <h4 class="text-cyan">Token Aktif (Unused)</h4>
-                <h1 id="statActiveToken" class="text-neon" style="font-size: 2.5rem;">0</h1>
-            </div>
-            <div class="holo-card" style="padding: 20px;">
-                <h4 class="text-cyan">Total Views</h4>
-                <h1 id="statViews" class="text-neon" style="font-size: 2.5rem;">0</h1>
-            </div>
-        </div>
 
-        <!-- FORM UPLOAD VIDEO -->
-        <div class="glass-panel" style="padding: 25px;">
-            <h3 class="text-cyan" style="margin-bottom: 20px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">🎥 Upload Video Baru</h3>
-            <form id="addVideoForm">
-                <div class="form-group">
-                    <label class="form-label">Judul Film</label>
-                    <input type="text" id="vidTitle" class="neu-glass-input" placeholder="Contoh: The Neon Hack" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Genre</label>
-                    <select id="vidGenre" class="neu-glass-input" required>
-                        <option value="Fiksi Ilmiah">Fiksi Ilmiah</option>
-                        <option value="Aksi">Aksi & Laga</option>
-                        <option value="Romantis">Romantis</option>
-                        <option value="Horror">Horror</option>
-                        <option value="Komedi">Komedi</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Cover Image URL</label>
-                    <input type="url" id="vidCover" class="neu-glass-input" placeholder="https://..." required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Video Stream URL</label>
-                    <input type="url" id="vidUrl" class="neu-glass-input" placeholder="https://..." required>
-                </div>
-                <div class="form-group" style="display: flex; align-items: center; gap: 15px;">
-                    <label class="form-label" style="margin:0;">Jadikan Konten Premium? (Butuh Token)</label>
-                    <label class="switch">
-                        <input type="checkbox" id="vidPremium" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <button type="submit" class="btn-skeuo" style="margin-top: 10px;">Simpan Video ke Database</button>
-            </form>
-        </div>
-
-        <!-- FORM GENERATE TOKEN -->
-        <div class="glass-panel" style="padding: 25px;">
-            <h3 class="text-cyan" style="margin-bottom: 20px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">🔑 Generate Access Token</h3>
-            <form id="generateTokenForm">
-                <div class="form-group">
-                    <label class="form-label">Pilih Video yang Diberi Akses</label>
-                    <select id="tokenVideoId" class="neu-glass-input" required>
-                        <option value="ALL">Semua Video (Master/VIP Token)</option>
-                        <!-- Dynamic options loaded by JS -->
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Custom Prefix (Awalan Token)</label>
-                    <input type="text" id="tokenPrefix" class="neu-glass-input" placeholder="Contoh: AXA, VIP, TIKTOK" value="AXA" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Jumlah Token yang Ingin Dicetak</label>
-                    <input type="number" id="tokenCount" class="neu-glass-input" value="10" min="1" max="100" required>
-                </div>
-                <button type="submit" class="btn-skeuo" style="margin-top: 25px;">Generate & Cetak Token</button>
-            </form>
-        </div>
-
-        <!-- TABEL TOKEN -->
-        <div class="glass-panel" style="grid-column: 1 / -1; padding: 25px;">
-            <h3 class="text-neon" style="margin-bottom: 20px;">Daftar Token Terbaru</h3>
-            <div class="table-container">
-                <table class="glass-table">
-                    <thead>
-                        <tr>
-                            <th>Kode Token</th>
-                            <th>Akses Video ID</th>
-                            <th>Status</th>
-                            <th>Dibuat Pada</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tokenTableBody">
-                        <tr><td colspan="4" style="text-align:center;">Memuat data...</td></tr>
-                    </tbody>
-                </table>
+            <!-- FORM UPLOAD VIDEO -->
+            <div class="glass-panel" style="padding: 25px;">
+                <h3 class="text-cyan" style="margin-bottom: 20px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">🎥 Upload Video Baru</h3>
+                <form id="addVideoForm">
+                    <div class="form-group">
+                        <label class="form-label">Judul Film</label>
+                        <input type="text" id="vidTitle" class="neu-glass-input" placeholder="Contoh: The Neon Hack" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Genre</label>
+                        <select id="vidGenre" class="neu-glass-input" required>
+                            <option value="Fiksi Ilmiah">Fiksi Ilmiah</option>
+                            <option value="Aksi">Aksi & Laga</option>
+                            <option value="Romantis">Romantis</option>
+                            <option value="Horror">Horror</option>
+                            <option value="Komedi">Komedi</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cover Image URL</label>
+                        <input type="url" id="vidCover" class="neu-glass-input" placeholder="https://..." required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Video Stream URL</label>
+                        <input type="url" id="vidUrl" class="neu-glass-input" placeholder="https://..." required>
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: center; gap: 15px;">
+                        <label class="form-label" style="margin:0;">Jadikan Konten Premium? (Butuh Token)</label>
+                        <label class="switch">
+                            <input type="checkbox" id="vidPremium" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn-skeuo" style="margin-top: 10px;">Simpan Video ke Database</button>
+                </form>
             </div>
-        </div>
-    </main>
 
-    <script src="/js/admin.js"></script>
+            <!-- FORM GENERATE TOKEN -->
+            <div class="glass-panel" style="padding: 25px;">
+                <h3 class="text-cyan" style="margin-bottom: 20px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">🔑 Generate Access Token</h3>
+                <form id="generateTokenForm">
+                    <div class="form-group">
+                        <label class="form-label">Pilih Video yang Diberi Akses</label>
+                        <select id="tokenVideoId" class="neu-glass-input" required>
+                            <option value="ALL">Semua Video (Master/VIP Token)</option>
+                            <!-- Dynamic options loaded by JS -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Custom Prefix (Awalan Token)</label>
+                        <input type="text" id="tokenPrefix" class="neu-glass-input" placeholder="Contoh: AXA, VIP, TIKTOK" value="AXA" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Jumlah Token yang Ingin Dicetak</label>
+                        <input type="number" id="tokenCount" class="neu-glass-input" value="10" min="1" max="100" required>
+                    </div>
+                    <button type="submit" class="btn-skeuo" style="margin-top: 25px;">Generate & Cetak Token</button>
+                </form>
+            </div>
+
+            <!-- TABEL TOKEN -->
+            <div class="glass-panel" style="grid-column: 1 / -1; padding: 25px;">
+                <h3 class="text-neon" style="margin-bottom: 20px;">Daftar Token Terbaru</h3>
+                <div class="table-container">
+                    <table class="glass-table">
+                        <thead>
+                            <tr>
+                                <th>Kode Token</th>
+                                <th>Akses Video ID</th>
+                                <th>Status</th>
+                                <th>Dibuat Pada</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tokenTableBody">
+                            <tr><td colspan="4" style="text-align:center;">Memuat data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- PASTIKAN PATH /public/ MASUK -->
+    <script src="/public/js/admin.js"></script>
 </body>
 </html>
