@@ -1,17 +1,15 @@
 // FILE: public/js/app.js
-// VANILLA JS ENGINE: Mengambil data dari Backend Redis & Mengatur Interaksi
+// VANILLA JS ENGINE: Mengambil data dari Backend Redis & Mengatur Interaksi (100% Synchronized)
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log("🔥 AXA SHORT+ Frontend Engine Initialized. Gasss!");
     
-    // Identifikasi Elemen DOM di tiap halaman
     const homeGrid = document.getElementById('home-video-grid');
     const exploreGrid = document.getElementById('explore-video-grid');
     const searchInput = document.getElementById('searchInput');
     const searchGrid = document.getElementById('search-video-grid');
-    const playContainer = document.getElementById('play-video-details'); // Khusus play.html
+    const playContainer = document.getElementById('play-video-details'); 
 
-    // State penyimpan memori sementara agar web cepat (SPA feel)
     let allVideos = [];
 
     // ==========================================
@@ -23,9 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const videos = await res.json();
             allVideos = videos;
             return videos;
-        } catch (error) {
+        } catch (error) { 
             console.error("Gagal load data dari backend:", error);
-            return [];
+            return []; 
         }
     }
 
@@ -56,11 +54,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     if (homeGrid) {
         fetchVideosData().then(videos => {
-            if (videos.length === 0) {
-                homeGrid.innerHTML = '<p style="text-align:center; width:100%; color:#888;">Belum ada film bosku. Upload dari Admin Dashboard dulu!</p>';
-                return;
+            if (videos.length === 0) { 
+                homeGrid.innerHTML = '<p style="color:#888; text-align:center; width:100%;">Belum ada film bosku. Upload dari Admin Dashboard dulu!</p>'; 
+                return; 
             }
-            // Tampilkan video terbaru di atas (reverse)
             homeGrid.innerHTML = videos.reverse().map(vid => generateVideoCard(vid)).join('');
         });
     }
@@ -70,14 +67,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     if (exploreGrid) {
         fetchVideosData().then(videos => {
-            if (videos.length === 0) {
-                exploreGrid.innerHTML = '<p style="text-align:center; width:100%; color:#888;">Belum ada konten di katalog.</p>';
-                return;
+            if (videos.length === 0) { 
+                exploreGrid.innerHTML = '<p style="color:#888; text-align:center; width:100%;">Belum ada konten di katalog.</p>'; 
+                return; 
             }
-            // Tampilkan semua secara default
             exploreGrid.innerHTML = videos.reverse().map(vid => generateVideoCard(vid)).join('');
             
-            // Logika Filter by Genre
             const genreBadges = document.querySelectorAll('.genre-filter');
             genreBadges.forEach(badge => {
                 badge.style.cursor = "pointer";
@@ -85,8 +80,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const selectedGenre = e.target.innerText;
                     const filtered = videos.filter(v => v.genre === selectedGenre);
                     exploreGrid.innerHTML = filtered.length > 0 
-                        ? filtered.map(vid => generateVideoCard(vid)).join('')
-                        : `<p style="text-align:center; width:100%; color:#ff3366;">Belum ada video untuk genre ${selectedGenre}.</p>`;
+                        ? filtered.map(vid => generateVideoCard(vid)).join('') 
+                        : `<p style="color:#ff3366; text-align:center; width:100%;">Belum ada video untuk genre ${selectedGenre}.</p>`;
                 });
             });
         });
@@ -96,23 +91,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // 5. LOGIKA HALAMAN SEARCH (LIVE SEARCH)
     // ==========================================
     if (searchInput && searchGrid) {
-        fetchVideosData(); // Load ke background memory dulu biar instan
-
+        fetchVideosData(); 
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase();
-            if(query.trim() === '') {
-                searchGrid.innerHTML = '';
-                return;
+            if(query.trim() === '') { 
+                searchGrid.innerHTML = ''; 
+                return; 
             }
-            // Filter berdasarkan judul ATAU genre
-            const filtered = allVideos.filter(v => 
-                v.title.toLowerCase().includes(query) || 
-                v.genre.toLowerCase().includes(query)
-            );
-            
+            const filtered = allVideos.filter(v => v.title.toLowerCase().includes(query) || v.genre.toLowerCase().includes(query));
             searchGrid.innerHTML = filtered.length > 0 
-                ? filtered.map(vid => generateVideoCard(vid)).join('')
-                : '<p style="text-align:center; width:100%; color:#aaa;">Video nggak ketemu bosku.</p>';
+                ? filtered.map(vid => generateVideoCard(vid)).join('') 
+                : '<p style="color:#aaa; text-align:center; width:100%;">Video nggak ketemu bosku.</p>';
         });
     }
 
@@ -123,39 +112,43 @@ document.addEventListener('DOMContentLoaded', () => {
         const videoId = document.getElementById('videoIdHolder').value;
         const playerBox = document.getElementById('player-container');
         
-        // Tarik data detail video untuk dipasang di HTML (Title & Cover otomatis)
         fetchVideosData().then(videos => {
             const vid = videos.find(v => v.id === videoId);
             if (vid) {
                 document.getElementById('play-title').innerText = vid.title;
                 document.getElementById('play-desc').innerText = `Genre: ${vid.genre}. Film eksklusif AXA SHORT+ yang penuh kejutan!`;
                 
-                // Jadikan cover gambar sebagai background player yang terkunci
-                playerBox.style.backgroundImage = `linear-gradient(rgba(5, 5, 16, 0.8), rgba(5, 5, 16, 0.9)), url('${vid.coverUrl}')`;
+                playerBox.style.backgroundImage = `linear-gradient(rgba(5, 5, 16, 0.8), rgba(5, 5, 16, 0.95)), url('${vid.coverUrl}')`;
                 playerBox.style.backgroundSize = 'cover';
                 playerBox.style.backgroundPosition = 'center';
             }
         });
     }
 
-    // Logika Verifikasi Token (Skeuomorphic Button Interaction)
+    // ==========================================
+    // 7. SISTEM VALIDASI LISENSI
+    // ==========================================
     const tokenModal = document.getElementById('tokenModal');
     const closeBtn = document.getElementById('closeModal');
     const verifyBtn = document.getElementById('verifyTokenBtn');
     
-    if (closeBtn) {
-        closeBtn.addEventListener('click', () => {
-            tokenModal.classList.remove('active');
-        });
-    }
+    if (closeBtn) closeBtn.addEventListener('click', () => tokenModal.classList.remove('active'));
 
     if (verifyBtn) {
         verifyBtn.addEventListener('click', async () => {
-            const token = document.getElementById('tokenInput').value;
+            const tokenInput = document.getElementById('tokenInput');
+            // [SUPER BIG UPGRADE] Auto-Clean Spasi & Kapital, selaras dengan Backend Redis
+            const token = tokenInput.value.trim().toUpperCase();
             const videoId = document.getElementById('videoIdHolder').value;
             
+            if(!token) { 
+                alert("Token nggak boleh kosong bosku!"); 
+                tokenInput.focus();
+                return; 
+            }
+
             const btnText = verifyBtn.innerText;
-            verifyBtn.innerText = "⏳ Mengecek...";
+            verifyBtn.innerText = "⏳ Mengecek License...";
             verifyBtn.disabled = true;
 
             try {
@@ -167,24 +160,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await res.json();
                 
                 if(data.valid) {
-                    alert("🔥 AKSES DIBUKA! Selamat menonton bosku.");
+                    alert("🔥 AKSES VIP DIBUKA! Selamat menonton bosku.");
                     tokenModal.classList.remove('active');
                     
-                    // Render HTML5 Video Player untuk memutar GDrive/MP4 langsung
                     const playerBox = document.getElementById('player-container');
-                    playerBox.style.background = "#000"; // Hapus cover, ganti hitam pekat
+                    playerBox.style.background = "#000"; 
                     playerBox.style.padding = "0";
-                    playerBox.innerHTML = `
-                        <video width="100%" height="100%" controls autoplay controlsList="nodownload" style="border-radius:16px; outline: none;">
-                            <source src="${data.streamUrl}" type="video/mp4">
-                            Browser lo nggak support HTML5 video bosku.
-                        </video>
-                    `;
+                    
+                    // [SUPER BIG UPGRADE] Auto-Detect Engine untuk iFrame GDrive vs MP4 Lokal
+                    if (data.streamUrl.includes('drive.google.com')) {
+                        playerBox.innerHTML = `
+                            <iframe src="${data.streamUrl}" width="100%" height="100%" allow="autoplay; fullscreen" allowfullscreen style="border:none; border-radius:16px; min-height: 250px;"></iframe>
+                        `;
+                    } else {
+                        playerBox.innerHTML = `
+                            <video width="100%" height="100%" controls autoplay controlsList="nodownload" style="border-radius:16px; outline: none; background: #000;">
+                                <source src="${data.streamUrl}" type="video/mp4">
+                                Browser lo nggak support HTML5 video bosku.
+                            </video>
+                        `;
+                    }
                 } else {
                     alert("❌ " + (data.message || "Token Salah atau Sudah Dipakai!"));
+                    // Bersihkan input field dan fokus kembali biar user gampang ngetik ulang
+                    tokenInput.value = '';
+                    tokenInput.focus();
                 }
             } catch (err) {
-                console.error(err);
+                console.error("Fetch Error:", err);
                 alert("Terjadi kesalahan server, coba lagi.");
             } finally {
                 verifyBtn.innerText = btnText;
@@ -197,5 +200,12 @@ document.addEventListener('DOMContentLoaded', () => {
 // Trigger Modal helper function (Dipanggil dari tombol di HTML play.html)
 window.triggerPremiumUnlock = function(vidId) {
     const modal = document.getElementById('tokenModal');
-    modal.classList.add('active'); // CSS opacity akan otomatis menganimasi masuk
+    modal.classList.add('active'); 
+    
+    // [SUPER BIG UPGRADE] Auto-Focus UX
+    // Begitu modal animasi selesai (300ms), kursor otomatis kedap-kedip di input token
+    setTimeout(() => {
+        const tokenInput = document.getElementById('tokenInput');
+        if (tokenInput) tokenInput.focus();
+    }, 300);
 }
