@@ -28,7 +28,7 @@ body:not(.admin-body) {
 }
 
 /* ==========================================
-   A. GLASSMORPHISM
+   A. GLASSMORPHISM (Efek Kaca Frosted)
    ========================================== */
 .glass-panel {
   background: var(--glass-bg);
@@ -40,52 +40,75 @@ body:not(.admin-body) {
 }
 
 /* ==========================================
-   [SUPER BIG UPGRADE] B. MODAL TOKEN PREMIUM (NEON GLOW)
+   [SUPER BIG UPGRADE] MODAL TOKEN PREMIUM (TAMPILAN BARU SUPER GLOWING)
    ========================================== */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 2000; opacity: 0; pointer-events: none; transition: all 0.4s ease;
+}
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
+
 .token-modal-box {
-    background: rgba(5, 5, 16, 0.95);
-    border: 2px solid var(--accent-neon);
-    box-shadow: 0 0 20px rgba(0, 255, 128, 0.3), inset 0 0 15px rgba(0,255,128,0.1);
+    background: linear-gradient(145deg, rgba(5, 5, 16, 0.95), rgba(2, 2, 8, 0.98));
+    border: 2px solid rgba(0, 255, 128, 0.5);
+    box-shadow: 0 0 25px rgba(0, 255, 128, 0.2), inset 0 0 15px rgba(0, 255, 128, 0.1);
     border-radius: 24px;
-    padding: 35px 25px;
+    padding: 40px 30px;
     position: relative;
     overflow: hidden;
-    animation: modalGlow 2s infinite alternate;
+    width: 90%;
+    max-width: 420px;
+    text-align: center;
+    transform: translateY(20px);
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
-@keyframes modalGlow {
-    0% { box-shadow: 0 0 20px rgba(0, 255, 128, 0.3), inset 0 0 15px rgba(0,255,128,0.1); }
-    100% { box-shadow: 0 0 40px rgba(0, 255, 128, 0.6), inset 0 0 30px rgba(0,255,128,0.2); }
+.modal-overlay.active .token-modal-box {
+    transform: translateY(0);
+    animation: modalPulse 2s infinite alternate;
 }
 
+@keyframes modalPulse {
+    0% { box-shadow: 0 0 20px rgba(0, 255, 128, 0.2), inset 0 0 10px rgba(0, 255, 128, 0.1); border-color: rgba(0, 255, 128, 0.4); }
+    100% { box-shadow: 0 0 45px rgba(0, 255, 128, 0.6), inset 0 0 25px rgba(0, 255, 128, 0.3); border-color: rgba(0, 255, 128, 0.9); }
+}
+
+/* Form Input Lisensi Premium yang Tebal dan Holographic */
 .token-input-premium {
-    background: #000;
-    border: 1px dashed var(--accent-neon);
+    background: #020205;
+    border: 2px dashed rgba(0, 255, 128, 0.4);
     color: var(--accent-neon);
-    font-size: 1.5rem;
-    letter-spacing: 4px;
+    font-size: 1.8rem;
+    letter-spacing: 6px;
     text-align: center;
     text-transform: uppercase;
-    box-shadow: inset 0 0 10px rgba(0,255,128,0.2);
-    border-radius: 12px;
-    padding: 15px;
+    border-radius: 16px;
+    padding: 18px;
     width: 100%;
     outline: none;
     transition: all 0.3s ease;
-    font-weight: bold;
+    font-weight: 900;
+    margin-bottom: 25px;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
 }
 .token-input-premium:focus {
-    border: 1px solid var(--accent-neon);
-    box-shadow: inset 0 0 20px rgba(0,255,128,0.5), 0 0 20px rgba(0,255,128,0.5);
-    background: rgba(0,255,128,0.05);
+    border: 2px solid var(--accent-neon);
+    box-shadow: inset 0 0 20px rgba(0,255,128,0.3), 0 0 20px rgba(0,255,128,0.4);
+    background: rgba(0, 255, 128, 0.05);
+    transform: scale(1.02);
 }
 .token-input-premium::placeholder {
-    color: rgba(0, 255, 128, 0.3);
-    font-size: 1rem;
-    letter-spacing: 1px;
+    color: rgba(0, 255, 128, 0.2);
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    font-weight: normal;
 }
 
 /* ==========================================
-   C. CLAYMORPHISM, BLOB, HOLO, SKEUO (TETAP SAMA)
+   B. NEU-GLASSMORPHISM (Tombol Aktif/Input Admin)
    ========================================== */
 .neu-glass-input {
   background: rgba(255, 255, 255, 0.03);
@@ -111,9 +134,8 @@ select.neu-glass-input option { background: var(--bg-navy); color: var(--text-li
   padding: 10px; width: 100%; cursor: pointer; transition: all 0.3s ease; font-size: 0.9rem;
 }
 .neu-glass-file::file-selector-button {
-  background: linear-gradient(145deg, #060613, #04040d);
-  color: var(--accent-neon); border: 1px solid var(--accent-neon);
-  padding: 8px 16px; border-radius: 8px; margin-right: 15px; font-weight: bold;
+  background: linear-gradient(145deg, #060613, #04040d); color: var(--accent-neon);
+  border: 1px solid var(--accent-neon); padding: 8px 16px; border-radius: 8px; margin-right: 15px; font-weight: bold;
   cursor: pointer; box-shadow: 2px 2px 5px rgba(0,0,0,0.5); transition: all 0.3s ease;
 }
 .neu-glass-file::file-selector-button:hover {
@@ -121,9 +143,12 @@ select.neu-glass-input option { background: var(--bg-navy); color: var(--text-li
 }
 .neu-glass-file:hover { border-color: var(--accent-neon); background: rgba(0, 255, 128, 0.05); }
 
+/* ==========================================
+   C. CLAYMORPHISM (Badge/Genre)
+   ========================================== */
 .clay-badge {
-  background: rgba(25, 25, 25, 0.8);
-  border-radius: 20px; padding: 6px 14px; font-size: 0.8rem; font-weight: bold; color: var(--accent-cyan);
+  background: rgba(25, 25, 25, 0.8); border-radius: 20px; padding: 6px 14px;
+  font-size: 0.8rem; font-weight: bold; color: var(--accent-cyan);
   box-shadow: 8px 8px 16px rgba(0,0,0,0.4), inset -4px -4px 8px rgba(0, 0, 0, 0.2), inset 4px 4px 8px rgba(255, 255, 255, 0.08);
   transition: transform 0.3s ease; display: inline-block;
 }
@@ -131,6 +156,9 @@ select.neu-glass-input option { background: var(--bg-navy); color: var(--text-li
 .clay-badge.success { color: var(--accent-neon); }
 .clay-badge.danger { color: #ff3366; }
 
+/* ==========================================
+   D. BLOB ANIMATION (Background)
+   ========================================== */
 .blob-bg {
   position: fixed; top: -10%; right: -10%; width: 300px; height: 300px;
   background: radial-gradient(circle, rgba(0,255,128,0.15) 0%, rgba(0,0,0,0) 70%); z-index: -1;
@@ -143,6 +171,9 @@ select.neu-glass-input option { background: var(--bg-navy); color: var(--text-li
   100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: scale(1); }
 }
 
+/* ==========================================
+   E. HOLOGRAPHIC UI & NEON GLOW (Cards)
+   ========================================== */
 .holo-card {
   position: relative; border-radius: 16px; overflow: hidden;
   background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%, rgba(0, 255, 128, 0.1) 100%);
@@ -152,6 +183,9 @@ select.neu-glass-input option { background: var(--bg-navy); color: var(--text-li
   box-shadow: 0 0 15px rgba(0, 255, 128, 0.4), 0 0 30px rgba(0, 255, 128, 0.2); transform: translateY(-5px);
 }
 
+/* ==========================================
+   F. SKEUOMORPHISM MODERN (Tombol & Toggle)
+   ========================================== */
 .btn-skeuo {
   background: linear-gradient(145deg, #060613, #04040d); border: none; border-radius: 12px;
   color: var(--accent-neon); font-weight: 700; padding: 12px 24px;
@@ -164,17 +198,18 @@ select.neu-glass-input option { background: var(--bg-navy); color: var(--text-li
 .slider {
   position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
   background: linear-gradient(145deg, #111, #222);
-  box-shadow: inset 2px 2px 5px rgba(0,0,0,0.8), inset -2px -2px 5px rgba(255,255,255,0.1);
-  transition: .4s; border-radius: 34px;
+  box-shadow: inset 2px 2px 5px rgba(0,0,0,0.8), inset -2px -2px 5px rgba(255,255,255,0.1); transition: .4s; border-radius: 34px;
 }
 .slider:before {
   position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px;
-  background: #444; box-shadow: 2px 2px 5px rgba(0,0,0,0.5), inset 2px 2px 4px rgba(255,255,255,0.2);
-  transition: .4s; border-radius: 50%;
+  background: #444; box-shadow: 2px 2px 5px rgba(0,0,0,0.5), inset 2px 2px 4px rgba(255,255,255,0.2); transition: .4s; border-radius: 50%;
 }
 input:checked + .slider { background: var(--accent-neon); box-shadow: 0 0 15px rgba(0,255,128,0.5), inset 2px 2px 5px rgba(0,0,0,0.3); }
 input:checked + .slider:before { transform: translateX(26px); background: #fff; }
 
+/* ==========================================
+   ADMIN LAYOUT & COMPONENTS
+   ========================================== */
 .admin-header { padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); }
 .admin-grid { display: grid; grid-template-columns: 1fr; gap: 20px; padding: 20px; }
 @media(min-width: 768px) { .admin-grid { grid-template-columns: repeat(2, 1fr); } .admin-stats { grid-column: span 2; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; } }
@@ -184,6 +219,7 @@ input:checked + .slider:before { transform: translateX(26px); background: #fff; 
 .glass-table td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.02); color: #ddd; }
 .glass-table tr:hover { background: rgba(0,255,128,0.05); }
 
+/* Bottom Nav Public */
 .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; justify-content: space-around; padding: 15px 0; z-index: 1000; border-top-left-radius: 24px; border-top-right-radius: 24px; }
 .nav-item { color: #888; text-decoration: none; display: flex; flex-direction: column; align-items: center; font-size: 0.75rem; transition: all 0.3s ease; }
 .nav-item.active, .nav-item:hover { color: var(--accent-neon); text-shadow: 0 0 8px rgba(0, 255, 128, 0.6); }
@@ -197,7 +233,3 @@ input:checked + .slider:before { transform: translateX(26px); background: #fff; 
 .video-card-img { width: 100%; height: 220px; object-fit: cover; border-bottom: 1px solid var(--glass-border); }
 .video-info { padding: 12px; }
 .video-title { font-size: 1rem; margin-bottom: 8px; }
-
-.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
-.modal-overlay.active { opacity: 1; pointer-events: auto; }
-.modal-content { width: 90%; max-width: 400px; padding: 24px; text-align: center; }
