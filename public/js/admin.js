@@ -1,6 +1,4 @@
 // FILE: public/js/admin.js
-// Logika Vanilla JS Halaman Admin & Sistem Login Gate (Anti Bypass)
-
 document.addEventListener('DOMContentLoaded', () => {
     console.log("AXA Admin System Loaded.");
     
@@ -17,21 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const user = document.getElementById('adminUser').value;
             const pass = document.getElementById('adminPass').value;
 
-            // Validasi Kredensial (Sesuai Environment Variables)
             if (user === 'axaaxyz_01' && pass === 'axaxyz999') {
-                // Login Berhasil
-                loginOverlay.style.opacity = '0'; // Animasi fade out
-                
+                loginOverlay.style.opacity = '0';
                 setTimeout(() => {
                     loginOverlay.style.display = 'none';
                     dashboardWrapper.style.display = 'block';
-                    
-                    // Trigger animasi fade in ke dashboard
-                    setTimeout(() => {
-                        dashboardWrapper.style.opacity = '1';
-                    }, 50);
-
-                    // Panggil data dari backend (Mencegah pencurian data sebelum login)
+                    setTimeout(() => dashboardWrapper.style.opacity = '1', 50);
                     initDashboardData();
                 }, 300);
             } else {
@@ -41,35 +30,69 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 2. EVENT LISTENER FORMS DASHBOARD
+    // 2. EVENT LISTENER FORMS DASHBOARD (UPLOAD VIDEO MULTIPART)
     // ==========================================
     const addVideoForm = document.getElementById('addVideoForm');
+    const btnSubmit = document.getElementById('btnUploadSubmit');
+
     if (addVideoForm) {
         addVideoForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const payload = {
-                title: document.getElementById('vidTitle').value,
-                genre: document.getElementById('vidGenre').value,
-                coverUrl: document.getElementById('vidCover').value,
-                videoUrl: document.getElementById('vidUrl').value,
-                isPremium: document.getElementById('vidPremium').checked
-            };
+            
+            // Animasi Loading Tombol
+            const originalBtnText = btnSubmit.innerText;
+            btnSubmit.innerText = "⏳ Sedang Mengupload... (Jangan di-close)";
+            btnSubmit.disabled = true;
+            btnSubmit.style.opacity = "0.7";
+
+            // Menggunakan FormData untuk support Upload File Binary
+            const formData = new FormData();
+            formData.append('title', document.getElementById('vidTitle').value);
+            formData.append('genre', document.getElementById('vidGenre').value);
+            formData.append('coverUrl', document.getElementById('vidCover').value);
+            formData.append('isPremium', document.getElementById('vidPremium').checked);
+
+            // Cek apakah admin memilih upload file ATAU paste URL
+            const fileInput = document.getElementById('vidFile');
+            const urlInput = document.getElementById('vidUrl');
+
+            if (fileInput.files.length > 0) {
+                formData.append('videoFile', fileInput.files[0]); // Attach file binary
+            } else if (urlInput.value.trim() !== '') {
+                formData.append('videoUrl', urlInput.value); // Kirim URL
+            } else {
+                alert("Bosku wajib masukin File Video atau Paste URL!");
+                resetBtn();
+                return;
+            }
 
             try {
+                // Fetch TIDAK BOLEH pakai header 'Content-Type: application/json' jika pakai FormData
+                // Browser akan otomatis ngeset tipe 'multipart/form-data' dengan boundary yang benar.
                 const res = await fetch('/api/admin/videos', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    body: formData 
                 });
+                
                 const data = await res.json();
                 if(data.success) {
                     alert(`🔥 BOMB! Video "${data.video.title}" berhasil naik ke server!`);
-                    e.target.reset();
-                    initDashboardData(); // Refresh data otomatis
+                    addVideoForm.reset();
+                    initDashboardData(); 
+                } else {
+                    alert("Upload gagal: " + data.message);
                 }
             } catch (error) {
                 console.error(error);
                 alert("Oops! Server lagi sibuk, gagal upload.");
+            } finally {
+                resetBtn();
+            }
+
+            function resetBtn() {
+                btnSubmit.innerText = originalBtnText;
+                btnSubmit.disabled = false;
+                btnSubmit.style.opacity = "1";
             }
         });
     }
@@ -93,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await res.json();
                 if(data.success) {
                     alert(`✨ GACOR! Berhasil nyetak ${data.tokens.length} token siap jual!`);
-                    initDashboardData(); // Refresh data otomatis
+                    initDashboardData();
                 }
             } catch (error) {
                 console.error(error);
@@ -103,10 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// ==========================================
-// 3. FUNGSI INISIALISASI & FETCH BACKEND
-// (Dipanggil HANYA setelah login sukses)
-// ==========================================
 function initDashboardData() {
     fetchDashboardStats();
     fetchVideosForDropdown();
@@ -117,14 +136,11 @@ async function fetchDashboardStats() {
     try {
         const res = await fetch('/api/admin/stats');
         const stats = await res.json();
-        
         document.getElementById('statTotalVideo').innerText = stats.totalVideos;
         document.getElementById('statTotalToken').innerText = stats.totalTokens;
         document.getElementById('statActiveToken').innerText = stats.activeTokens;
         document.getElementById('statViews').innerText = stats.totalViews.toLocaleString('id-ID');
-    } catch (e) {
-        console.error("Gagal load stats:", e);
-    }
+    } catch (e) { console.error("Gagal load stats", e); }
 }
 
 async function fetchVideosForDropdown() {
@@ -132,14 +148,9 @@ async function fetchVideosForDropdown() {
         const res = await fetch('/api/videos');
         const videos = await res.json();
         const select = document.getElementById('tokenVideoId');
-        
         select.innerHTML = '<option value="ALL">Semua Video (Master/VIP Token)</option>';
-        videos.forEach(v => {
-            select.innerHTML += `<option value="${v.id}">${v.title} (${v.id})</option>`;
-        });
-    } catch (e) {
-        console.error("Gagal load dropdown video", e);
-    }
+        videos.forEach(v => { select.innerHTML += `<option value="${v.id}">${v.title} (${v.id})</option>`; });
+    } catch (e) { console.error("Gagal load dropdown video", e); }
 }
 
 async function fetchTokenList() {
@@ -147,7 +158,6 @@ async function fetchTokenList() {
         const res = await fetch('/api/admin/tokens');
         const tokens = await res.json();
         const tbody = document.getElementById('tokenTableBody');
-        
         tbody.innerHTML = tokens.reverse().map(t => `
             <tr>
                 <td style="font-family: monospace; font-size: 1.1rem;" class="text-neon">${t.token}</td>
@@ -155,13 +165,11 @@ async function fetchTokenList() {
                 <td>
                     ${t.isUsed 
                         ? '<span class="clay-badge danger" style="padding: 4px 10px; font-size:0.7rem;">Terpakai</span>' 
-                        : '<span class="clay-badge success" style="padding: 4px 10px; font-size:0.7rem;">Aktif / Tersedia</span>'
+                        : '<span class="clay-badge success" style="padding: 4px 10px; font-size:0.7rem;">Aktif</span>'
                     }
                 </td>
                 <td style="font-size: 0.8rem; color:#888;">${new Date(t.createdAt).toLocaleString('id-ID')}</td>
             </tr>
         `).join('');
-    } catch (e) {
-        console.error("Gagal load table token", e);
-    }
+    } catch (e) { console.error("Gagal load table token", e); }
 }
